@@ -14,15 +14,18 @@ class Adherent(models.Model):
 	estValide = models.BooleanField(default=False, verbose_name="l'adherent est valide")
 
 	def __str__(self):
-		return "{0}".format(nom).upper()+ "{0}".format(prenom).capitalize()
+		return "{0} ".format(self.nom).upper()+ "{0}".format(self.prenom).capitalize()
 
 
 class Ordinateur(models.Model):
 	nom = models.CharField(max_length=20, primary_key=True, verbose_name="nom indice du PC")
-	adresseMAC = models.CharField(max_length=17, validators=[RegexValidator(regex=r'^([a-f0-9](2):)(5)[a-f0-9](2)$', message="Adresse MAC invalide")], verbose_name="Adresse MAC")
+	adresseMAC = models.CharField(max_length=17, validators=[RegexValidator(regex=r'^([a-f0-9]{2}:){5}[a-f0-9]{2}$', message="Adresse MAC invalide")], verbose_name="Adresse MAC")
 	adresseIP = models.GenericIPAddressField(protocol='IpV4', verbose_name="IP dynamique")
 	possesseur = models.ForeignKey('Adherent', verbose_name="Possesseur de l'ordinateur")
 	
+	def __init__(self, *argc, **argv):
+		models.Model.__init__(self, *argc, **argv)
+
 	def __str__(self):
-		return "PC {0}".format(nom)
+		return "PC {0}".format(self.nom)
 # Create your models here

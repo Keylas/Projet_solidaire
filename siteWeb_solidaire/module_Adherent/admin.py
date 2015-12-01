@@ -7,10 +7,12 @@ class adminAdherent(admin.ModelAdmin):
 	date_hierarchy = 'dateExpiration'
 	ordering = ('dateExpiration', )
 	search_fields = ('nom', 'prenom', 'mail', 'chambre')
+	description = "Adrérent du réseau"
 
 class adminOrdinateur(admin.ModelAdmin):
 	list_display = ('possesseur', 'adresseIP', 'adresseMAC')
 	search_fields = ('possesseur', 'adresseIP', 'adresseMAC')
+	description = "Ordinateur autorisé"
 
 
 admin.site.register(Adherent)
