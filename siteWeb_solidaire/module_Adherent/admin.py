@@ -15,7 +15,7 @@ class adminOrdinateur(admin.ModelAdmin):
 	description = "Ordinateur autorisé"
 
 
-admin.site.register(Adherent)
-admin.site.register(Ordinateur)
+admin.site.register(Adherent, adminAdherent)
+admin.site.register(Ordinateur, adminOrdinateur)
 
 # Register your models here.

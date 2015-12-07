@@ -54,6 +54,7 @@ class Ordinateur(models.Model):
 		"""Surcharge de la fonction de sauvegarde qui va s'occuper de formater les chaînes préalablement"""
 		self.formatage()
 		super(Ordinateur, self).save(*argc, **argv)
+
 	def __str__(self):
 		return "PC {0}".format(self.nom)
 
