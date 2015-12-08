@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+	<title>{% block title %}Titre du fichier base.html{% endblock %} </title>
+</head>
+
+<body>
+<header> {% block header %} Projet SOLIDAIRE {% endblock %}</header>
+	<nav>
+		<ul>
+			<li><a href="/accueil">Accueil</a></li>
+			<li><a href="/adherents">Adherent</a></li>
+			<li><a href="/ordinateurs">Ordinateur</a></li>
+		</ul>
+	</nav>
+
+
+{% block content %}
+<p> Ici on met plein de content </p>
+{% endblock %}
+
+<footer>{% block footer %} Votre footer ici{% endblock %}</footer>
+
+</body>
+</html>
+

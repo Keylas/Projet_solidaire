@@ -24,7 +24,11 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
+TEMPLATE_STRING_IF_INVALID = 'BAD_STRING' #Le nom est assez explicite non ?
+
+#ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['*'] #all users allowed, not recommended in production
+
 
 
 # Application definition
@@ -53,6 +57,8 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'siteWeb_solidaire.urls'
 
 WSGI_APPLICATION = 'siteWeb_solidaire.wsgi.application'
+
+TEMPLATE_DIRS = os.path.join(BASE_DIR, 'templates'),
 
 
 # Database

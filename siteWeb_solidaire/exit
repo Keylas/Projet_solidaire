@@ -1,0 +1,13 @@
+                                    Liste des bases de données
+     Nom      | Propriétaire | Encodage | Collationnement | Type caract. |     Droits d'accès     
+--------------+--------------+----------+-----------------+--------------+------------------------
+ db_superuser | postgres     | UTF8     | fr_FR.UTF-8     | fr_FR.UTF-8  | =Tc/postgres          +
+              |              |          |                 |              | postgres=CTc/postgres +
+              |              |          |                 |              | superuser=CTc/postgres
+ postgres     | postgres     | UTF8     | fr_FR.UTF-8     | fr_FR.UTF-8  | 
+ template0    | postgres     | UTF8     | fr_FR.UTF-8     | fr_FR.UTF-8  | =c/postgres           +
+              |              |          |                 |              | postgres=CTc/postgres
+ template1    | postgres     | UTF8     | fr_FR.UTF-8     | fr_FR.UTF-8  | =c/postgres           +
+              |              |          |                 |              | postgres=CTc/postgres
+(4 lignes)
+
