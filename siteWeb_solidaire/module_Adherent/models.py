@@ -3,6 +3,7 @@ from django_enumfield import enum
 from django.utils import timezone
 from django.core.validators import RegexValidator, MinValueValidator
 
+
 class Adherent(models.Model):
 	"""Models des adhérents qui permet la gestion administrative"""
 	nom = models.CharField(max_length=45, verbose_name="Nom de famille") 
@@ -46,6 +47,7 @@ class Adherent(models.Model):
 		exclude.append('chambre')#On ajoute la chambre au champs dont on ne verifie pas l'unicité.
 		super(Adherent, self).validate_unique(exclude)
 
+
 class Ordinateur(models.Model):
 	"""Model des objets représentant les ordinateurs. Ils definissent l'IP et la MAC du PC autorisé"""
 
@@ -53,10 +55,26 @@ class Ordinateur(models.Model):
 	adresseMAC = models.CharField(max_length=17, validators=[RegexValidator(regex=r'^([a-fA-F0-9]{2}[: ;]?){5}[a-fA-F0-9]{2}$', message="Adresse MAC invalide")], verbose_name="Adresse MAC")
 	adresseIP = models.GenericIPAddressField(protocol='IpV4', verbose_name="IP dynamique", unique=True)
 	possesseur = models.ForeignKey('Adherent', verbose_name="Possesseur de l'ordinateur")
-	IP_pile #Pile qui va contenir les IP disponible.
+
+	@classmethod
+	def genererListeInitiale(cls, taille = 1024):
+		"""Préremplie la liste des IP disponible en fonction de celle en BDD"""
+		pile = []
+		for i in range(taille, -1, -1):
+			ipChaine="10.2."
+			ipChaine += "{0}.{1}".format((i//256)+1, i % 256)
+			try:
+				Ordinateur.objects.get(adresseIP=ipChaine)
+			except Ordinateur.DoesNotExist:
+				pile.append(ipChaine)
+
+		return pile
+	IP_pile = [] #Pile qui va contenir les IP disponible.	
 
 	def save(self, *argc, **argv):
 		"""Surcharge de la fonction de sauvegarde qui va s'occuper de formater les chaînes préalablement"""
+		if len(self.__class__.IP_pile) == 0:
+			self.__class__.IP_pile=self.__class__.genererListeInitiale()
 		self.formatage()
 		super(Ordinateur, self).save(*argc, **argv)
 
@@ -82,3 +100,7 @@ class Ordinateur(models.Model):
 		chtemp = chtemp.replace(';', '')
 		li = [chtemp[0:2],chtemp[2:4],chtemp[4:6],chtemp[6:8],chtemp[8:10],chtemp[10:12]]
 		self.adresseMAC = ":".join(li)
+	
+		#Obtention de l'adresse IP
+		if not self.adresseIP:
+			self.adresseIP = self.__class__.IP_pile.pop()
