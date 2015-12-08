@@ -54,7 +54,7 @@ class Ordinateur(models.Model):
 	nom = models.CharField(max_length=20, primary_key=True, verbose_name="nom indice du PC")
 	adresseMAC = models.CharField(max_length=17, validators=[RegexValidator(regex=r'^([a-fA-F0-9]{2}[: ;]?){5}[a-fA-F0-9]{2}$', message="Adresse MAC invalide")], verbose_name="Adresse MAC")
 	adresseIP = models.GenericIPAddressField(protocol='IpV4', verbose_name="IP dynamique", unique=True)
-	possesseur = models.ForeignKey('Adherent', verbose_name="Possesseur de l'ordinateur")
+	possesseur = models.ForeignKey(Adherent, verbose_name="Possesseur de l'ordinateur")
 
 	@classmethod
 	def genererListeInitiale(cls, taille = 1024):
@@ -62,7 +62,7 @@ class Ordinateur(models.Model):
 		pile = []
 		for i in range(taille, -1, -1):
 			ipChaine="10.2."
-			ipChaine += "{0}.{1}".format((i//256)+1, i % 256)
+			ipChaine += "{0}.{1}".format((i//256)+1, i%256)
 			try:
 				Ordinateur.objects.get(adresseIP=ipChaine)
 			except Ordinateur.DoesNotExist:

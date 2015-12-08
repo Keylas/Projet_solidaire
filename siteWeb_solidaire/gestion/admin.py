@@ -18,7 +18,15 @@ class adminLog(admin.ModelAdmin):
 		    return text
 	apercu_description.short_description="Description du log"
 
+class adminPayement(admin.ModelAdmin):
+	list_display = ('beneficiaire', 'montantFictif', 'montantReel', 'etat')
+	list_filter = ('dateExecution', 'etat')
+	date_hierarchy = 'dateExecution'
+	ordering = ('dateExecution', )
+	search_fields = ('montantFictif','montantReel')
+	exclude = ('etat',)
+
 admin.site.register(Log, adminLog)
 admin.site.register(Utilisateur)
-admin.site.register(Payement)
+admin.site.register(Payement, adminPayement)
 

@@ -1,8 +1,7 @@
-from module_Adherent.models import *
 from django.db import models
 from django_enumfield import enum
 from django.contrib.auth.models import User
-
+from module_Adherent.models import Adherent
 
 class RoleRezoman(enum.Enum):
 	"""Enumeration pour les statuts des utilisateurs du site"""
@@ -63,23 +62,25 @@ class Log(models.Model):
 	"""Entité des logs des activités des modérateurs"""
 	date = models.DateTimeField(auto_now_add=True, auto_now=False)
 	description = models.TextField(null=False)
-	editeur = models.ForeignKey('Utilisateur')
+	editeur = models.ForeignKey(Utilisateur)
 	
 	def __str__(self):
 		"""Renvoie une chaine de caractère représentative de l'entité"""
 		return "Log du {0} exécuté par {2} : {1}".format(self.date, self.description, self.editeur)
 
+
 class Payement(models.Model):
 	"""Entité qui représente les payements"""
+	beneficiaire = models.ForeignKey(Adherent)
 	dateExecution = models.DateTimeField(auto_now_add=True, editable=False)
 	montantFictif = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="Montant à créditer")
 	montantReel = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="Montant réel payé")
-	commentaire = models.TextField(null=True, verbose_name="Commentaire du créateur, à remplir si les deux montants sont différents")
-	banque = models.CharField(null=True, max_length=42)
+	commentaire = models.TextField(blank=True, verbose_name="Commentaire du créateur, à remplir si les deux montants sont différents")
+	banque = models.CharField(blank=True, max_length=42)
 	etat = enum.EnumField(EtatPayement, default=EtatPayement.DECLARE)
-	#beneficiaire = models.ForeignKey(Adherent)
+	
 	
 	def __str__(self):
 		"""Renvoie une chaine de caractère représentative de l'entité"""
-		return "Payement de {0} euros à compter du {1}".format(self.montantFictif, self.dateExecution)
+		return "Payement de {0} euros à compter du {1}".format(self.montantFictif, self.dateExecution.date())
 
