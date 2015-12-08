@@ -9,12 +9,14 @@ class adminAdherent(admin.ModelAdmin):
 	ordering = ('dateExpiration', )
 	search_fields = ('nom', 'prenom', 'mail', 'chambre')
 	description = "Adrérent du réseau"
+	exclude = ('estValide',)
 
 class adminOrdinateur(admin.ModelAdmin):
 	"""Classe de gestion d'affichage de l'entité Ordinateur"""
 	list_display = ('possesseur', 'adresseIP', 'adresseMAC')
 	search_fields = ('possesseur', 'adresseIP', 'adresseMAC')
 	description = "Ordinateur autorisé"
+
 
 
 admin.site.register(Adherent, adminAdherent) #Link de l'entité Adhérent
