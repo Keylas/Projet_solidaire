@@ -2,6 +2,7 @@ from django.db import models
 from django_enumfield import enum
 from django.contrib.auth.models import User
 from module_Adherent.models import Adherent
+from django.core.exceptions import ValidationError
 
 class RoleRezoman(enum.Enum):
 	"""Enumeration pour les statuts des utilisateurs du site"""
@@ -71,7 +72,7 @@ class Log(models.Model):
 
 class Payement(models.Model):
 	"""Entité qui représente les payements"""
-	beneficiaire = models.ForeignKey(Adherent)
+	beneficiaire = models.ForeignKey(Adherent, verbose_name="Membre créditeur")
 	dateExecution = models.DateTimeField(auto_now_add=True, editable=False)
 	montantFictif = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="Montant à créditer")
 	montantReel = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="Montant réel payé")
@@ -83,4 +84,9 @@ class Payement(models.Model):
 	def __str__(self):
 		"""Renvoie une chaine de caractère représentative de l'entité"""
 		return "Payement de {0} euros à compter du {1}".format(self.montantFictif, self.dateExecution.date())
+
+	#def clean(self):
+	#	if self.montantFictif != self.montantReel and not self.commentaire:
+	#		erreur = ValidationError( "Il faut justifier pourquoi les montants sont différents !", code='invalid')
+	#		self.commentaire.add_error(erreur)
 
