@@ -13,10 +13,10 @@ class adminAdherent(admin.ModelAdmin):
 
 class adminOrdinateur(admin.ModelAdmin):
 	"""Classe de gestion d'affichage de l'entité Ordinateur"""
-	list_display = ('possesseur', 'adresseIP', 'adresseMAC')
-	search_fields = ('possesseur', 'adresseIP', 'adresseMAC')
+	list_display = ('proprietaire', 'adresseIP', 'adresseMAC')
+	search_fields = ('proprietaire', 'adresseIP', 'adresseMAC')
 	description = "Ordinateur autorisé"
-	exclude = ('nom', 'adresseIP')
+	exclude = ('nomDNS', 'adresseIP')
 
 
 admin.site.register(Adherent, adminAdherent) #Link de l'entité Adhérent

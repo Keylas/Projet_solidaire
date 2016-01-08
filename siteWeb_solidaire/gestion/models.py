@@ -63,7 +63,7 @@ class Log(models.Model):
 	"""Entité des logs des activités des modérateurs"""
 	date = models.DateTimeField(auto_now_add=True, auto_now=False)
 	description = models.TextField(null=False)
-	editeur = models.ForeignKey(Utilisateur)
+	editeur = models.ForeignKey(Utilisateur, related_name='listeLog')
 	
 	def __str__(self):
 		"""Renvoie une chaine de caractère représentative de l'entité"""
@@ -72,10 +72,12 @@ class Log(models.Model):
 
 class Payement(models.Model):
 	"""Entité qui représente les payements"""
-	beneficiaire = models.ForeignKey(Adherent, verbose_name="Membre créditeur")
-	dateExecution = models.DateTimeField(auto_now_add=True, editable=False)
-	montantFictif = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="Montant à créditer")
-	montantReel = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="Montant réel payé")
+	beneficiaire = models.ForeignKey(Adherent, verbose_name="Membre créditeur", related_name='listePayement')
+	#champPipo = models.CharField(blank=True, max_length=420)
+	rezoman = models.ForeignKey(Utilisateur, verbose_name="Rezoman créateur du payement", related_name='listePayement')
+	dateCreation = models.DateTimeField(auto_now_add=True, editable=False)
+	credit = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="Montant à créditer")
+	montantRecu = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="Montant réel payé")
 	commentaire = models.TextField(blank=True, verbose_name="Commentaire du créateur, à remplir si les deux montants sont différents")
 	banque = models.CharField(blank=True, max_length=42)
 	etat = enum.EnumField(EtatPayement, default=EtatPayement.DECLARE)
@@ -83,10 +85,10 @@ class Payement(models.Model):
 	
 	def __str__(self):
 		"""Renvoie une chaine de caractère représentative de l'entité"""
-		return "Payement de {0} euros à compter du {1}".format(self.montantFictif, self.dateExecution.date())
+		return "Payement de {0} euros à compter du {1}".format(self.credit, self.dateCreation.date())
 
-	#def clean(self):
-	#	if self.montantFictif != self.montantReel and not self.commentaire:
-	#		erreur = ValidationError( "Il faut justifier pourquoi les montants sont différents !", code='invalid')
-	#		self.commentaire.add_error(erreur)
+	def clean(self):
+		super(Payement, self).clean()
+		if self.montantRecu != self.credit and not self.commentaire:
+			raise ValidationError({'commentaire': "Il faut justifier pourquoi les montants sont différents !"})
 

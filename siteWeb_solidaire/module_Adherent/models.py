@@ -51,10 +51,10 @@ class Adherent(models.Model):
 class Ordinateur(models.Model):
 	"""Model des objets représentant les ordinateurs. Ils definissent l'IP et la MAC du PC autorisé"""
 
-	nom = models.CharField(max_length=20, primary_key=True, verbose_name="nom indice du PC")
+	nomDNS = models.CharField(max_length=20, primary_key=True, verbose_name="nom indice du PC")
 	adresseMAC = models.CharField(max_length=17, validators=[RegexValidator(regex=r'^([a-fA-F0-9]{2}[: ;]?){5}[a-fA-F0-9]{2}$', message="Adresse MAC invalide")], verbose_name="Adresse MAC")
 	adresseIP = models.GenericIPAddressField(protocol='IpV4', verbose_name="IP dynamique", unique=True)
-	possesseur = models.ForeignKey(Adherent, verbose_name="Possesseur de l'ordinateur")
+	proprietaire = models.ForeignKey(Adherent, verbose_name="Possesseur de l'ordinateur", related_name='listeOrdinateur')
 
 	@classmethod
 	def genererListeInitiale(cls, taille = 1024):
@@ -80,19 +80,19 @@ class Ordinateur(models.Model):
 
 	def __str__(self):
 		"""Retourne une chaîne de caractère caractéristique de l'adhérent"""
-		return "PC {0}".format(self.nom)
+		return "PC {0}".format(self.nomDNS)
 
 	def formatage(self):
 		"""Fonction qui s'occupe de mettre en forme les différentes chaînes de caractères avant l'enregistrement."""
 		#Formatage du nom du pc, pour générer les clés primaires
-		if self.nom=="":
+		if self.nomDNS=="":
 			if len(self.possesseur.prenom) > 3:
 		    		pren = self.possesseur.prenom[0:3]
 			else:
 				pren=self.possesseur.prenom
 			chaine=self.possesseur.nom.lower().lstrip()+pren.lower()
-			res = Ordinateur.objects.filter(nom__contains = chaine)
-			self.nom = chaine + "{0}".format(res.count()+1)
+			res = Ordinateur.objects.filter(nomDNS__contains = chaine)
+			self.nomDNS = chaine + "{0}".format(res.count()+1)
 
 		#Formatage de l'adresse MAC
 		chtemp = self.adresseMAC.replace(' ', '')

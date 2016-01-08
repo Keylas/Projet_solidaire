@@ -2,17 +2,18 @@ from django.db import models
 from module_Adherent.models import Adherent
 
 class Mailing(models.Model):
-	nom = models.CharField(max_length=25, verbose_name="Nom de la mailing")
-	gerant = models.ForeignKey(Adherent, verbose_name="Maitre de la mailing", related_name='mailingGerant')
-	membres = models.ManyToManyField(Adherent, verbose_name="Membres", related_name='mailingMembre')
+	adresse = models.CharField(max_length=25, verbose_name="Nom de la mailing")
+	referant = models.ForeignKey(Adherent, verbose_name="Maitre de la mailing", related_name='listeMailingGere')
+	listeAdherent = models.ManyToManyField(Adherent, verbose_name="Membres", related_name='listeMailing')
 
+	
 	def __str__(self):
-		return "Mailing {0} géré par {1}".format(self.nom, self.gerant)
+		return "Mailing {0} géré par {1}".format(self.adresse, self.referant)
 
 	def save(self, *argc, **argv):
 		try:
-			self.membres.get(pk=self.gerant.pk)
+			self.listeAdherent.get(pk=self.referant.pk)
 		except self.DoesNotExist:
-			self.membre.add(self.gerant)
+			self.listeAdherent.add(self.referant)
 
 		super(self, Mailing).save(*argc, **argv)
