@@ -78,6 +78,7 @@ class Ordinateur(models.Model):
 		self.formatage()
 		super(Ordinateur, self).save(*argc, **argv)
 
+	
 	def __str__(self):
 		"""Retourne une chaîne de caractère caractéristique de l'adhérent"""
 		return "PC {0}".format(self.nomDNS)
@@ -86,11 +87,11 @@ class Ordinateur(models.Model):
 		"""Fonction qui s'occupe de mettre en forme les différentes chaînes de caractères avant l'enregistrement."""
 		#Formatage du nom du pc, pour générer les clés primaires
 		if self.nomDNS=="":
-			if len(self.possesseur.prenom) > 3:
-		    		pren = self.possesseur.prenom[0:3]
+			if len(self.proprietaire.prenom) > 3:
+		    		pren = self.proprietaire.prenom[0:3]
 			else:
-				pren=self.possesseur.prenom
-			chaine=self.possesseur.nom.lower().lstrip()+pren.lower()
+				pren=self.proprietaire.prenom
+			chaine=self.proprietaire.nom.lower().lstrip()+pren.lower()
 			res = Ordinateur.objects.filter(nomDNS__contains = chaine)
 			self.nomDNS = chaine + "{0}".format(res.count()+1)
 

@@ -1,7 +1,7 @@
 from django.db import models
 from django_enumfield import enum
 from django.contrib.auth.models import User
-from module_Adherent.models import Adherent
+from ressourcesAdherent.models import Adherent
 from django.core.exceptions import ValidationError
 
 class RoleRezoman(enum.Enum):
@@ -73,7 +73,6 @@ class Log(models.Model):
 class Payement(models.Model):
 	"""Entité qui représente les payements"""
 	beneficiaire = models.ForeignKey(Adherent, verbose_name="Membre créditeur", related_name='listePayement')
-	#champPipo = models.CharField(blank=True, max_length=420)
 	rezoman = models.ForeignKey(Utilisateur, verbose_name="Rezoman créateur du payement", related_name='listePayement')
 	dateCreation = models.DateTimeField(auto_now_add=True, editable=False)
 	credit = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="Montant à créditer")

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from module_Adherent.models import Adherent, Ordinateur
+from ressourcesAdherent.models import Adherent, Ordinateur
 
 class adminAdherent(admin.ModelAdmin):
 	"""Classe de gestion d'affichage de l'entité Adhérent"""

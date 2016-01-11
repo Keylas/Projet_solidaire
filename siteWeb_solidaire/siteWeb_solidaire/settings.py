@@ -36,8 +36,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    #'module_Adherent',
+    'ressourcesAdherent',
     'gestion',
-    'module_Adherent',
     'services',
 )
 

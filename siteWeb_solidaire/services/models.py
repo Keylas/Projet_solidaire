@@ -1,5 +1,5 @@
 from django.db import models
-from module_Adherent.models import Adherent
+from ressourcesAdherent.models import Adherent
 
 class Mailing(models.Model):
 	adresse = models.CharField(max_length=25, verbose_name="Nom de la mailing")
