@@ -56,6 +56,7 @@ ROOT_URLCONF = 'siteWeb_solidaire.urls'
 
 WSGI_APPLICATION = 'siteWeb_solidaire.wsgi.application'
 
+LOGIN_REDIRECT_URL = 'connexion'
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
