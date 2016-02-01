@@ -10,11 +10,18 @@
 Vous êtes connecté, {{ user.username }} !
 {% else %}
 
+<<<<<<< HEAD
 <form method="post" action= "{% url 'django.contrib.auth.views.login' %}">
     {% csrf_token %}
     {{ form.as_p }}
     <input type="submit" value="Se connecter" />
     <input type="hidden" name="next" value="{{ next }}" />
+=======
+<form method="post" action="connexion">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Se connecter" />
+>>>>>>> branch 'Developpement_models_suite' of https://github.com/Keylas/projet_solidaire
 </form>
 
 {% endif %}

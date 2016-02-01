@@ -56,7 +56,11 @@ ROOT_URLCONF = 'siteWeb_solidaire.urls'
 
 WSGI_APPLICATION = 'siteWeb_solidaire.wsgi.application'
 
+<<<<<<< HEAD
 LOGIN_REDIRECT_URL = '/onTest'
+=======
+LOGIN_REDIRECT_URL = 'connexion'
+>>>>>>> branch 'Developpement_models_suite' of https://github.com/Keylas/projet_solidaire
 
 LOGIN_URL = '/gestion/connexion'
 
