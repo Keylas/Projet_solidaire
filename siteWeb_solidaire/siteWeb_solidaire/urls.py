@@ -6,8 +6,6 @@ from gestion import views as g_views
 
 urlpatterns = patterns('',
     # Examples:
-    # url(r'^$', 'siteWeb_solidaire.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
     url(r'^onTest$', g_views.test),
 
     url(r'^admin/', include(admin.site.urls)),

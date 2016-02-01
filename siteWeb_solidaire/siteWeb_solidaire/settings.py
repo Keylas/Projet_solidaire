@@ -56,7 +56,9 @@ ROOT_URLCONF = 'siteWeb_solidaire.urls'
 
 WSGI_APPLICATION = 'siteWeb_solidaire.wsgi.application'
 
-LOGIN_REDIRECT_URL = 'connexion'
+LOGIN_REDIRECT_URL = '/onTest'
+
+LOGIN_URL = '/gestion/connexion'
 
 TEMPLATE_DIRS = (
 	os.path.join(BASE_DIR, 'templates'),
