@@ -2,11 +2,9 @@
 
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-<<<<<<< HEAD
 from gestion import views as g_views
-=======
 from ressourcesAdherent import views
->>>>>>> branch 'Developpement_models_suite' of https://github.com/Keylas/projet_solidaire
+
 
 urlpatterns = patterns('',
     # Examples:

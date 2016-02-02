@@ -56,17 +56,14 @@ ROOT_URLCONF = 'siteWeb_solidaire.urls'
 
 WSGI_APPLICATION = 'siteWeb_solidaire.wsgi.application'
 
-<<<<<<< HEAD
 LOGIN_REDIRECT_URL = '/onTest'
-=======
-LOGIN_REDIRECT_URL = 'connexion'
->>>>>>> branch 'Developpement_models_suite' of https://github.com/Keylas/projet_solidaire
 
 LOGIN_URL = '/gestion/connexion'
 
 TEMPLATE_DIRS = (
 	os.path.join(BASE_DIR, 'templates'),
 )
+
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
