@@ -1,0 +1,10 @@
+{% extends "layoutAffichage.html" %}
+{% block tableauAffichage %}
+	{% for log in listeLog %}
+		<p>
+			<span>{{ log.date }}</span>
+			<span>{{ log.editeur }}</span>
+			<span>{{ log.description }}</span>
+		</p>
+	{% endfor %}
+{% endblock %}
