@@ -1,0 +1,17 @@
+<!DOCTYPE HTML>
+<html lang="fr">
+	<head>
+		{% block link %}{% endblock %}
+		<title>{% block titre %}Layout d'affichage de niveau 1 {% endblock %}</title>
+	</head>
+
+	<body>
+		<header>{% block header %}{% endblock %}</header>
+		{% include "layoutNav.html" %}
+
+		{% block content %} {% endblock %}
+
+		<footer> {% block footer %} {% endblock %} </footer>
+
+	</body>
+</html>

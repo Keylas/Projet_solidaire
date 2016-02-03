@@ -24,10 +24,7 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
-TEMPLATE_STRING_IF_INVALID = 'BAD_STRING' #Le nom est assez explicite non ?
-
-#ALLOWED_HOSTS = ['localhost', '127.0.0.1']
-ALLOWED_HOSTS = ['*'] #all users allowed, not recommended in production
+ALLOWED_HOSTS = []
 
 
 
@@ -40,8 +37,10 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    #'module_Adherent',
+    'ressourcesAdherent',
     'gestion',
-    'module_Adherent',
+    'services',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -58,9 +57,13 @@ ROOT_URLCONF = 'siteWeb_solidaire.urls'
 
 WSGI_APPLICATION = 'siteWeb_solidaire.wsgi.application'
 
-TEMPLATE_DIRS = os.path.join(BASE_DIR, 'templates'),
+LOGIN_REDIRECT_URL = '/gestion/accueil'
 
-STATIC_URL = '/static/'
+LOGIN_URL = '/gestion/connexion'
+
+TEMPLATE_DIRS = (
+	os.path.join(BASE_DIR, 'templates'),
+)
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
