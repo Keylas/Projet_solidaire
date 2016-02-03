@@ -60,6 +60,7 @@ WSGI_APPLICATION = 'siteWeb_solidaire.wsgi.application'
 
 TEMPLATE_DIRS = os.path.join(BASE_DIR, 'templates'),
 
+STATIC_URL = '/static/'
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
@@ -78,9 +79,9 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fr-FR'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Paris'
 
 USE_I18N = True
 

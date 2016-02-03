@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 
+{% load staticfiles %}
+
 <html lang="fr">
 <head>
 	<title>{% block title %}Titre du fichier base.html{% endblock %} </title>
@@ -8,10 +10,21 @@
 <body>
 <header> {% block header %} Projet SOLIDAIRE {% endblock %}</header>
 	<nav>
-		<ul>
-			<li><a href="/accueil">Accueil</a></li>
-			<li><a href="/adherents">Adherent</a></li>
-			<li><a href="/ordinateurs">Ordinateur</a></li>
+		<ul id ="menu_principal">
+			<li><a href="#">Gestion simple</a>
+				<ul>
+					<li><a href="#">Adhérents</a></li>
+					<li><a href="#">PasAdhérents</a></li>
+					<li><a href="#">PresqueAdhérents</a></li>
+				</ul>
+			</li>
+			<li><a href="#">Gestion moins simple</a>
+				<ul>
+					<li><a href="#">AdhérentsPasSimples</a></li>
+					<li><a href="#">AdhérentsVraimentPasSimples</a></li>
+					<li><a href="#">FTSIMOOH</a></li>
+				</ul>
+			</li>
 		</ul>
 	</nav>
 
