@@ -56,7 +56,7 @@ ROOT_URLCONF = 'siteWeb_solidaire.urls'
 
 WSGI_APPLICATION = 'siteWeb_solidaire.wsgi.application'
 
-LOGIN_REDIRECT_URL = '/onTest'
+LOGIN_REDIRECT_URL = '/gestion/accueil'
 
 LOGIN_URL = '/gestion/connexion'
 
