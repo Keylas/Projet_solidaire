@@ -1,3 +1,5 @@
+# coding=utf8
+
 from django.contrib import admin
 from gestion.models import Log, Utilisateur, Payement
 # Register your models here.

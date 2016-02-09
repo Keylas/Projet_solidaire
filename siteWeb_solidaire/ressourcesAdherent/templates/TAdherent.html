@@ -1,0 +1,12 @@
+{%  extends layoutAffichage %}
+{%  block titre %}Liste des Adherents{% endblock %}
+{% block tableauAffichage %}
+	{% for adherent in liste_Adherent %}
+		<p>
+			<span>{{ adherent.nom }} {{ adherent.prenom }}</span>
+			<span>{{ adherent.chambre }}</span>
+			<span>{{ adherent.dateExpiration }}</span>
+            <a href=#>Editer</a>
+		</p>
+	{% endfor %}
+{% endblock %}

@@ -17,7 +17,5 @@ class ListeLog(ListView):
 
 	@method_decorator(login_required)
 	def dispatch(self, *args, **kwargs):
-	        return super(ListeLog, self).dispatch(*args, **kwargs)
-
-	
+		return super(ListeLog, self).dispatch(*args, **kwargs)
 

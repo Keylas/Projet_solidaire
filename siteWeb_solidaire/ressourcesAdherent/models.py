@@ -1,3 +1,5 @@
+# coding=utf8
+
 from django.db import models
 from django_enumfield import enum
 from django.utils import timezone
@@ -21,7 +23,7 @@ class Adherent(models.Model):
 
 	def save(self, *argc, **argv):
 		"""Surcharge de la fonction d'enregistrement, qui s'occupe de formater les entrées préalablement"""
-		#On met a jourle statut et on formate les chaînes.
+		#On met a jour le statut et on formate les chaînes.
 		self.estValide = (self.dateExpiration >= timezone.now().date())
 		self.nom = self.nom.upper()
 		self.prenom = self.prenom.capitalize()

@@ -1,3 +1,5 @@
+# coding=utf8
+
 from django.db import models
 from ressourcesAdherent.models import Adherent
 
@@ -6,7 +8,6 @@ class Mailing(models.Model):
 	referant = models.ForeignKey(Adherent, verbose_name="Maitre de la mailing", related_name='listeMailingGere')
 	listeAdherent = models.ManyToManyField(Adherent, verbose_name="Membres", related_name='listeMailing')
 
-	
 	def __str__(self):
 		return "Mailing {0} géré par {1}".format(self.adresse, self.referant)
 
