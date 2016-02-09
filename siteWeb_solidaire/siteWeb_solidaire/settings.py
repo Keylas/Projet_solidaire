@@ -33,13 +33,13 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
-    'django.contrib.contenttypes',
+    'django.contrib.contenttylpes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'ressourcesAdherent',
     'gestion',
-    'services',
+    'ressourcesAdherent',
+    #'services',
 )
 
 MIDDLEWARE_CLASSES = (

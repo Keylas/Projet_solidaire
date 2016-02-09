@@ -1,5 +1,6 @@
 apt-get install python3
 apt-get install postgresql
+apt-get install postgresql-server-dev-all
 apt-get install python3-pip
 apt-get install git
 #apt-get install screen

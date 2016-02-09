@@ -1,3 +1,42 @@
+# coding=utf8
+
 import threading
 
 class Timer(threading.Thread):
+    def __init__(self, time):
+        threading.Thread.__init__(self)
+        self.stop = threading.Event()
+        self.temps = time
+
+    def run(self):
+        self.stop.wait(self.time)
+        SwitchWriter.ecrire()
+
+    def executer(self):
+        self.stop.set()
+
+
+class SwitchWriter():
+    instruction = []
+    timer = Timer(0)
+    nbInstructionMax = 50
+    tpsAttente = 600
+    mutex = threading.Lock()
+
+    @classmethod
+    def remplir(cls, chaine):
+        cls.mutex.acquire()
+        if(cls.instruction is null):
+            cls.timer = Timer(cls.tpsAttente)
+            cls.timer.start()
+        cls.instruction.__add__(chaine)
+        if(len(cls.instruction) >= cls.nbInstructionMax):
+            cls.timer.executer()
+        cls.mutex.release()
+
+    @classmethod
+    def ecrire(cls):
+        cls.mutex.acquire()
+        print('Appel du script d\'écriture') #Script pour écrire sur le switch
+        cls.instruction = []
+        cls.mutex.release()
