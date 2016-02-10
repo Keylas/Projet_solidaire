@@ -1,5 +1,5 @@
-{%  extends layoutAffichage %}
-{%  block titre %}Liste des Adherents{% endblock %}
+{% extends "layoutAffichage.html" %}
+{% block titre %}Liste des Adherents{% endblock %}
 {% block tableauAffichage %}
 	{% for adherent in liste_Adherent %}
 		<p>

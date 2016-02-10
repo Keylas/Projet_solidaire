@@ -13,4 +13,4 @@ class ListeAdherent(ListView):
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        return super(ListeAdherent, self).dispatch(*agrs, **kwargs)
+        return super(ListeAdherent, self).dispatch(*args, **kwargs)

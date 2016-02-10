@@ -2,15 +2,17 @@
 
 import threading
 
+
 class Timer(threading.Thread):
-    def __init__(self, time):
+    def __init__(self, time, fonction):
         threading.Thread.__init__(self)
         self.stop = threading.Event()
         self.temps = time
+        self.function = fonction
 
     def run(self):
         self.stop.wait(self.time)
-        SwitchWriter.ecrire()
+        self.function()
 
     def executer(self):
         self.stop.set()
@@ -26,17 +28,17 @@ class SwitchWriter():
     @classmethod
     def remplir(cls, chaine):
         cls.mutex.acquire()
-        if(cls.instruction is null):
-            cls.timer = Timer(cls.tpsAttente)
+        if cls.instruction is null:
+            cls.timer = Timer(cls.tpsAttente, cls.ecrire)
             cls.timer.start()
         cls.instruction.__add__(chaine)
-        if(len(cls.instruction) >= cls.nbInstructionMax):
+        if len(cls.instruction) >= cls.nbInstructionMax:
             cls.timer.executer()
         cls.mutex.release()
 
     @classmethod
     def ecrire(cls):
         cls.mutex.acquire()
-        print('Appel du script d\'écriture') #Script pour écrire sur le switch
+        print('Appel du script d\'écriture')  # Script pour écrire sur le switch
         cls.instruction = []
         cls.mutex.release()
