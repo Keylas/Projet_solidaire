@@ -1,3 +1,9 @@
 {% extends 'layoutBase.html' %}
 {% block titre %}Page de Rezotage{% endblock %}
 {% block content %}
+<form action="{% url 'pageRezotage' %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Rezoter">
+</form>
+{%  endblock %}
