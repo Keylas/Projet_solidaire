@@ -5,6 +5,14 @@ from django_enumfield import enum
 from django.contrib.auth.models import User
 from ressourcesAdherent.models import Adherent
 from django.core.exceptions import ValidationError
+from datetime import datetime, date, timedelta
+
+
+class ConstanteNotFind(Exception):
+    def __init__(self, raison):
+        self.raison = raison
+    def __str__(self):
+        return self.raison
 
 
 class RoleRezoman(enum.Enum):
@@ -80,7 +88,7 @@ class Payement(models.Model):
     """Entité qui représente les payements"""
     beneficiaire = models.ForeignKey(Adherent, verbose_name="Membre créditeur", related_name='listePayement')
     rezoman = models.ForeignKey(Utilisateur, verbose_name="Rezoman créateur du payement", related_name='listePayement')
-    dateCreation = models.DateTimeField(auto_now_add=True, editable=False)
+    dateCreation = models.DateField(auto_now_add=True, editable=False)
     credit = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="Montant à créditer")
     montantRecu = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="Montant réel payé")
     commentaire = models.TextField(blank=True,
@@ -90,7 +98,7 @@ class Payement(models.Model):
 
     def __str__(self):
         """Renvoie une chaine de caractère représentative de l'entité"""
-        return "Payement de {0} euros à compter du {1}".format(self.credit, self.dateCreation.date())
+        return "Payement de {0} euros à compter du {1}".format(self.credit, str(self.dateCreation))
 
     def clean(self):
         super(Payement, self).clean()
@@ -103,9 +111,12 @@ class Payement(models.Model):
             cste2 = Constante.objects.get(cle="DUREE_MOIS")
         except Constante.DoesNotExist:
             print("ERREUR : les constantes ne sont pas recupérable")
-            return
+            raise ConstanteNotFind("Les constantes ne sont pas accessible")
 
         super(Payement, self).save(args, kwargs)
+        jour = int(self.credit*cste2.value/cste1.value)
+        self.beneficiaire.dateExpiration = self.beneficiaire.dateExpiration + timedelta(days=jour)
+        self.beneficiaire.save()
 
 
 class Constante(models.Model):

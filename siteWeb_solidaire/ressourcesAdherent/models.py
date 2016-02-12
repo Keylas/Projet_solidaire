@@ -4,6 +4,7 @@ from django.db import models
 from django_enumfield import enum
 from django.utils import timezone
 from django.core.validators import RegexValidator, MinValueValidator
+import unicodedata
 
 
 class Adherent(models.Model):
@@ -29,7 +30,7 @@ class Adherent(models.Model):
     def save(self, *argc, **argv):
         """Surcharge de la fonction d'enregistrement, qui s'occupe de formater les entrées préalablement"""
         # On met a jour le statut et on formate les chaînes.
-        self.estValide = (self.dateExpiration >= timezone.now().date())
+        self.estValide = (self.dateExpiration.date() >= timezone.now().date())
         self.nom = self.nom.upper()
         self.prenom = self.prenom.capitalize()
 
@@ -96,12 +97,13 @@ class Ordinateur(models.Model):
     def formatage(self):
         """Fonction qui s'occupe de mettre en forme les différentes chaînes de caractères avant l'enregistrement."""
         # Formatage du nom du pc, pour générer les clés primaires
-        if self.nomDNS == "":
+        if not self.nomDNS or self.nomDNS == "":
             if len(self.proprietaire.prenom) > 3:
                 pren = self.proprietaire.prenom[0:3]
             else:
                 pren = self.proprietaire.prenom
             chaine = self.proprietaire.nom.lower().lstrip() + pren.lower()
+            chaine = chaine = unicodedata.normalize('NFKD', chaine).encode('ASCII', 'ignore').decode('utf-8')
             res = Ordinateur.objects.filter(nomDNS__contains=chaine)
             self.nomDNS = chaine + "{0}".format(res.count() + 1)
 
