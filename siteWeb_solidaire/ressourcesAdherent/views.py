@@ -47,11 +47,6 @@ def enregisterRezotage(form, utili):
         print("Session pour un utilisateur non reconnu,création de l'entité")
     payement.rezoman = newUser
     ordi = Ordinateur(adresseMAC=form.cleaned_data['premiereMAC'], proprietaire=adhr)
-    """
-    if len(ordi.__class__.IP_pile) == 0:
-            ordi.__class__.IP_pile = ordi.__class__.genererListeInitiale()
-    ordi.formatage()
-    """
 
     logRezotage = Log(editeur=newUser)
     logRezotage.description = "L\'adhérent {0} vient d'être créé".format(adhr)

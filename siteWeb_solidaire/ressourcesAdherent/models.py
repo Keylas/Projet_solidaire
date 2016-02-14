@@ -16,7 +16,7 @@ class Adherent(models.Model):
         RegexValidator(regex=r'^[A-DH][0-3]((0[0-9])|(1[0-3]))$', message="Erreur: cette chambre ne peut exister")],
                                unique=True, null=True)
     dateExpiration = models.DateField(verbose_name="Date de coupure de l'adhérent",
-                                      default=timezone.now)  # date limite avant la coupure de l'adherent
+                                      default=timezone.now().date())  # date limite avant la coupure de l'adherent
     commentaire = models.TextField(blank=True, verbose_name="Commentaire sur l'adhérent")
     estRezoman = models.BooleanField(default=False,
                                      verbose_name="statut de Rezoman")  # Si l'adhérent bénéficie du statut de Rezoman (filtrage MAC)
@@ -30,7 +30,7 @@ class Adherent(models.Model):
     def save(self, *argc, **argv):
         """Surcharge de la fonction d'enregistrement, qui s'occupe de formater les entrées préalablement"""
         # On met a jour le statut et on formate les chaînes.
-        self.estValide = (self.dateExpiration.date() >= timezone.now().date())
+        self.estValide = (self.dateExpiration >= timezone.now().date())
         self.nom = self.nom.upper()
         self.prenom = self.prenom.capitalize()
 

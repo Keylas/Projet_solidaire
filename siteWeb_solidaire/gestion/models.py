@@ -81,7 +81,7 @@ class Log(models.Model):
 
     def __str__(self):
         """Renvoie une chaine de caractère représentative de l'entité"""
-        return "Log du {0} exécuté par {2} : {1}".format(self.date, self.description, self.editeur)
+        return "Log du {0} exécuté par {2} : {1}".format(self.date.date(), self.description, self.editeur)
 
 
 class Payement(models.Model):
