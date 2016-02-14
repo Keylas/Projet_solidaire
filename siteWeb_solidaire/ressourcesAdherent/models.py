@@ -85,9 +85,9 @@ class Ordinateur(models.Model):
 
     def save(self, *argc, **argv):
         """Surcharge de la fonction de sauvegarde qui va s'occuper de formater les chaînes préalablement"""
-        if len(self.__class__.IP_pile) == 0:
-            self.__class__.IP_pile = self.__class__.genererListeInitiale()
-        self.formatage()
+        if len(self.__class__.IP_pile) == 0:  # Si la chaîne des adresse IP n'est pas crée
+            self.__class__.IP_pile = self.__class__.genererListeInitiale()  # On la crée
+        self.formatage()  # On formate les donnée et on enregistre en BDD
         super(Ordinateur, self).save(*argc, **argv)
 
     def __str__(self):
@@ -98,14 +98,14 @@ class Ordinateur(models.Model):
         """Fonction qui s'occupe de mettre en forme les différentes chaînes de caractères avant l'enregistrement."""
         # Formatage du nom du pc, pour générer les clés primaires
         if not self.nomDNS or self.nomDNS == "":
-            if len(self.proprietaire.prenom) > 3:
+            if len(self.proprietaire.prenom) > 3:  # On recupère les 3 premier caractère du prénom
                 pren = self.proprietaire.prenom[0:3]
             else:
                 pren = self.proprietaire.prenom
-            chaine = self.proprietaire.nom.lower().lstrip() + pren.lower()
+            chaine = self.proprietaire.nom.lower().lstrip() + pren.lower()  # On crée la chaine en la normalisant
             chaine = chaine = unicodedata.normalize('NFKD', chaine).encode('ASCII', 'ignore').decode('utf-8')
-            res = Ordinateur.objects.filter(nomDNS__contains=chaine)
-            self.nomDNS = chaine + "{0}".format(res.count() + 1)
+            res = Ordinateur.objects.filter(nomDNS__contains=chaine)  # On compte le nombre d'ordinateur de cet adhérent
+            self.nomDNS = chaine + "{0}".format(res.count() + 1)  # et on en rajoute 1
 
         # Formatage de l'adresse MAC
         chtemp = self.adresseMAC.replace(' ', '')

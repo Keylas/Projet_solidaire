@@ -11,6 +11,7 @@ from datetime import datetime, date, timedelta
 class ConstanteNotFind(Exception):
     def __init__(self, raison):
         self.raison = raison
+
     def __str__(self):
         return self.raison
 
@@ -92,7 +93,7 @@ class Payement(models.Model):
     credit = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="Montant à créditer")
     montantRecu = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="Montant réel payé")
     commentaire = models.TextField(blank=True,
-                                   verbose_name="Commentaire du créateur, à remplir si les deux montants sont différents")
+                                verbose_name="Commentaire du créateur, à remplir si les deux montants sont différents")
     banque = models.CharField(blank=True, max_length=42)
     etat = enum.EnumField(EtatPayement, default=EtatPayement.DECLARE)
 
@@ -106,19 +107,25 @@ class Payement(models.Model):
             raise ValidationError({'commentaire': "Il faut justifier pourquoi les montants sont différents !"})
 
     def save(self, *args, **kwargs):
+        """Surcharge de la fonction d'enregistrement afin de mettre a jour l'adherent concerné"""
+        # On tente de recupérer les constantes de conversion prix->temps
         try:
             cste1 = Constante.objects.get(cle="PRIX_MENSUEL")
             cste2 = Constante.objects.get(cle="DUREE_MOIS")
         except Constante.DoesNotExist:
+            # Si une des constantes n'est pas disponible, il faut générer une erreur (non traité)
             print("ERREUR : les constantes ne sont pas recupérable")
             raise ConstanteNotFind("Les constantes ne sont pas accessible")
 
-        super(Payement, self).save(args, kwargs)
-        jour = int(self.credit*cste2.value/cste1.value)
+        super(Payement, self).save(args, kwargs)  # On sauvegrade en BDD
+        # Ici l'edition d'un payement n'est pas pris en compte, à corriger
+        # On ajoute le crédit à l'adherent
+        jour = int(self.credit * cste2.value / cste1.value)
         self.beneficiaire.dateExpiration = self.beneficiaire.dateExpiration + timedelta(days=jour)
         self.beneficiaire.save()
 
 
 class Constante(models.Model):
+    """classe qui va contenir les differente constantes utiles pour le fonctionnement, pour le moment que des décimal"""
     cle = models.CharField(verbose_name="Nom de la constante", primary_key=True, max_length=90)
     value = models.DecimalField(verbose_name="Valeur", max_digits=20, decimal_places=10)
