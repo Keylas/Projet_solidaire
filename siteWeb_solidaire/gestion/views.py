@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.views.generic import ListView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from .models import Log
+from .models import Log, Payement
 
 
 # Create your views here.
@@ -20,3 +20,13 @@ class ListeLog(ListView):
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(ListeLog, self).dispatch(*args, **kwargs)
+
+class ListePayement(ListView):
+    model = Payement
+    context_object_name = "liste_Payement"
+    template_name = "TPayement.html"
+    ordering = ['dateCreation']
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ListePayement, self).dispatch(*args, **kwargs)

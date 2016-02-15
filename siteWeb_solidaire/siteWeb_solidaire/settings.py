@@ -10,8 +10,8 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
@@ -25,8 +25,6 @@ DEBUG = True
 TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
-
-
 
 # Application definition
 
@@ -61,7 +59,7 @@ LOGIN_REDIRECT_URL = '/gestion/accueil'
 LOGIN_URL = '/gestion/connexion'
 
 TEMPLATE_DIRS = (
-	os.path.join(BASE_DIR, 'templates'),
+    os.path.join(BASE_DIR, 'templates'),
 )
 
 # Database
@@ -71,10 +69,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'db_superuser',
-	'USER': 'superuser',
-	'PASSWORD':  'superuser',
-	'HOST': 'localhost',
-	'PORT': '',
+        'USER': 'superuser',
+        'PASSWORD': 'superuser',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 
@@ -90,7 +88,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/

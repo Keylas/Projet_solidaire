@@ -1,0 +1,14 @@
+{% extends "layoutAffichage.html" %}
+{% block titre %}Gestion de la trésorerie{% endblock %}
+{% block tableauAffichage %}
+	{% for payement in liste_Payement %}
+		<p>
+			<span>{{ payement.etat }}</span>
+			<span>{{ payement.beneficiaire }}</span>
+			<span>{{ payement.credit }}</span>
+            <span>{{ payement.montantRecu }}</span>
+            <span>{{ payement.banque }}</span>
+            <span><a href=#>Editer</a></span>
+		</p>
+	{% endfor %}
+{% endblock %}

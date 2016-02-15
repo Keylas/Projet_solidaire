@@ -57,7 +57,7 @@ def enregisterRezotage(form, utili):
     ordi = Ordinateur(adresseMAC=form.cleaned_data['premiereMAC'], proprietaire=adhr)
 
     logRezotage = Log(editeur=newUser)
-    logRezotage.description = "L\'adhérent {0} vient d'être créé".format(adhr)
+    logRezotage.description = "L\'adhérent {0} a été créé".format(adhr)
     #et on sauvegrade le tout (il faudra gérer les erreurs des constantes ici)
     #try:
     ordi.save()
@@ -68,3 +68,13 @@ def enregisterRezotage(form, utili):
         return"""
     print("L\'adhérent {0} va être créé avec le payement {1}, l'ordinateur {2} et le log {3}".format(adhr, payement, ordi, logRezotage))
     print("Formulaire déclaré valide")
+
+class ListeOrdinateur(ListView):
+    model = Ordinateur
+    context_object_name = 'liste_Ordinateur'
+    template_name = 'TOrdinateur.html'
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        """Permet d'imposer a toutes les fonction de cette classe de demander la connexion préalablement"""
+        return super(ListeOrdinateur, self).dispatch(*args, **kwargs)
