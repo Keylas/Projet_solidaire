@@ -116,19 +116,17 @@ class Payement(models.Model):
             # Si une des constantes n'est pas disponible, il faut générer une erreur (non traité)
             print("ERREUR : les constantes ne sont pas recupérable")
             raise ConstanteNotFind("Les constantes ne sont pas accessible")
+
+        # On verifie si le payement existe deja, dans ce cas c'est une modification
         try:
-            payementAnt = Payement.objects.get(pk=self.pk)
-            print(payementAnt)
-            jour = int((self.credit-payementAnt.credit) * cste2.value / cste1.value)
+            payementAnt = Payement.objects.get(pk=self.pk) # On récupère l'ancien payement
+            jour = int((self.credit-payementAnt.credit) * cste2.value / cste1.value) # Et on calcule la variation de jours
         except Payement.DoesNotExist:
-            jour = int(self.credit * cste2.value / cste1.value)
+            jour = int(self.credit * cste2.value / cste1.value) # Sinon c'est un nouveau payement
 
         super(Payement, self).save(args, kwargs)  # On sauvegrade en BDD
-        # Ici l'edition d'un payement n'est pas pris en compte, à corriger
-        # On ajoute le crédit à l'adherent
-
-        self.beneficiaire.dateExpiration = self.beneficiaire.dateExpiration + timedelta(days=jour)
-        self.beneficiaire.save()
+        self.beneficiaire.dateExpiration = self.beneficiaire.dateExpiration + timedelta(days=jour)# On ajoute le crédit
+        self.beneficiaire.save() # et on met à jour l'adhérent
 
 
 class Constante(models.Model):
