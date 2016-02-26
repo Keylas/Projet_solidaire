@@ -73,9 +73,21 @@ class Utilisateur(models.Model):
     def __str__(self):
         return "{0}, {1}".format(self.user.username, RoleRezoman.reverse(self.role))
 
+    @classmethod
+    def getUtilisateur(cls, utili):
+        try:
+            newUser = cls.objects.get(user=utili)
+        except cls.DoesNotExist:
+            newUser = cls(user=utili)
+            newUser.save()
+            print("Session pour un utilisateur non reconnu,création de l'entité")
+        return newUser
 
 class Log(models.Model):
     """Entité des logs des activités des modérateurs"""
+    class Meta:
+        ordering = ['-date'] # Defini la methode de classement
+
     date = models.DateTimeField(auto_now_add=True, auto_now=False)
     description = models.TextField(null=False)
     editeur = models.ForeignKey(Utilisateur, related_name='listeLog')
@@ -87,6 +99,9 @@ class Log(models.Model):
 
 class Payement(models.Model):
     """Entité qui représente les payements"""
+    class Meta:
+        ordering = ['-dateCreation']
+
     beneficiaire = models.ForeignKey(Adherent, verbose_name="Membre créditeur", related_name='listePayement')
     rezoman = models.ForeignKey(Utilisateur, verbose_name="Rezoman créateur du payement", related_name='listePayement')
     dateCreation = models.DateField(auto_now_add=True, editable=False)

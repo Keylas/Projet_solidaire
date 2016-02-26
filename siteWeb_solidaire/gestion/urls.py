@@ -7,5 +7,7 @@ urlpatterns = patterns('',
     url(r'^deconnexion$', auth_views.logout, {'next_page' : '/gestion/connexion'}, name="lien_logout"),
     url(r'^accueil$', views.ListeLog.as_view(), name="page_accueil"),
     url(r'^payement$', views.ListePayement.as_view(), name="page_payement"),
+    url(r'^editionP/(?P<id>[0-9]+)$', views.editerPayement, name="page_editionP"),
+    url(r'^creationP/(?P<adhrId>[0-9]+)$', views.creerPayement, name="page_creationP"),
 )
 

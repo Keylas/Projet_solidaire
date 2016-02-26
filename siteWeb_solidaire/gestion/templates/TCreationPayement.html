@@ -1,0 +1,9 @@
+{% extends 'layoutBase.html' %}
+{% block titre %}Nouveau payement{% endblock %}
+{% block content %}
+<form action="{% url 'page_creationP' localId %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Créer le payement">
+</form>
+{%  endblock %}
