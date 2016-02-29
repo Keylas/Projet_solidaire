@@ -5,5 +5,6 @@ from . import views
 urlpatterns = patterns('',
     url(r'^listeAdherent$', views.ListeAdherent.as_view(), name="affichageAdherent"), # page pour afficher les adherents
     url(r'^rezotage$', views.rezotage, name="pageRezotage"), # page de rezotage d'un nouvel adherent
-    url(r'listeOrdinateur', views.ListeOrdinateur.as_view(), name="affichageOrdinateur"), # page pour afficher les ordinateurs
+    url(r'^listeOrdinateur$', views.ListeOrdinateur.as_view(), name="affichageOrdinateur"), # page pour afficher les ordinateurs
+    url(r'^editionA/(?P<adhrId>[0-9]+)$', views.editionA, name="editionAdherent")
 )

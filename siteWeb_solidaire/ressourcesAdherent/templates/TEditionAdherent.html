@@ -1,0 +1,13 @@
+{% extends 'layoutBase.html' %}
+{% block titre %}Page d'edition de l'adherent {{ form.adherent }}{% endblock %}
+{% block content %}
+<form action="{% url 'editionAdherent' localId %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    {{ MACsForm.management_form }}
+    {%  for formItem in formset %}
+        {{ formItem }}<br/>
+    {% endfor %}
+    <input type="submit" value="Enregistrer les modifications">
+</form>
+{%  endblock %}

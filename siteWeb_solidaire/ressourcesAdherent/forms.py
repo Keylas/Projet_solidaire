@@ -1,5 +1,6 @@
 from django import forms
 import re
+from .models import Adherent, Ordinateur
 
 class RezotageForm(forms.Form):
     nom = forms.CharField(label="Nom")
@@ -43,3 +44,29 @@ class RezotageForm(forms.Form):
                 msg = "Un rezotage nécessite un crédit initial"
                 self.add_error('payementFictif', msg)
         return cleaned_data
+
+class AdherentForm(forms.Form):
+    nom = forms.CharField(label="Nom")
+    prenom = forms.CharField(label="Prénom")
+    mail = forms.EmailField(label="E-mail de contact")
+
+    rezoman = forms.BooleanField(label="Rezoman", required=False)
+    chambre = forms.CharField(label="Chambre", max_length=4)
+
+    def clean_chambre(self):
+        chambre = self.cleaned_data['chambre']
+        if re.search(r'^[A-DH][0-3]((0[0-9])|(1[0-3]))$', chambre) is None:
+            raise forms.ValidationError("Cette chambre n'existe pas")
+
+        return chambre
+
+class MacForm(forms.Form):
+    adresseMAC = forms.CharField(label="adresse MAC", max_length=17)
+
+    def clean_adresseMAC(self):
+        mac = self.cleaned_data['adresseMAC']
+        print("On controle bien l'adresse MAC")
+        if re.search(r'^([a-fA-F0-9]{2}[: ;]?){5}[a-fA-F0-9]{2}$', mac) is None:
+            raise forms.ValidationError("Adresse MAC invalide")
+
+        return mac

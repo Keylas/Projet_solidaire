@@ -1,10 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.forms import formset_factory
 from .models import Adherent, Ordinateur
 from gestion.models import Payement, Utilisateur, Log, ConstanteNotFind
-from .forms import RezotageForm
+from .forms import RezotageForm, AdherentForm, MacForm
 
 # Create your views here.
 
@@ -46,26 +47,23 @@ def enregisterRezotage(form, utili):
     payement.banque = chaine
     payement.beneficiaire=adhr
     #Si l'utilisateur django n'a pas de correspondance avec un rezoman (impossible en théorie), on crée la corespondance
-    try:
+    """try:
         newUser = Utilisateur.objects.get(user=utili)
     except Utilisateur.DoesNotExist:
         newUser = Utilisateur(user=utili)
         newUser.save()
-        print("Session pour un utilisateur non reconnu,création de l'entité")
+        print("Session pour un utilisateur non reconnu,création de l'entité")"""
+    newUser = Utilisateur.getUtilisateur(utili)
     payement.rezoman = newUser
     #On crée ensuite l'ordinateur et le log
     ordi = Ordinateur(adresseMAC=form.cleaned_data['premiereMAC'], proprietaire=adhr)
 
     logRezotage = Log(editeur=newUser)
     logRezotage.description = "L\'adhérent {0} a été créé".format(adhr)
-    #et on sauvegrade le tout (il faudra gérer les erreurs des constantes ici)
-    #try:
+    #et on sauvegrade le tout (il faudra gérer les erreurs ici)
     ordi.save()
     payement.save()
     logRezotage.save()
-    """except ConstanteNotFind, exc:
-        print("{0}".format(exc))
-        return"""
     print("L\'adhérent {0} va être créé avec le payement {1}, l'ordinateur {2} et le log {3}".format(adhr, payement, ordi, logRezotage))
     print("Formulaire déclaré valide")
 
@@ -78,3 +76,25 @@ class ListeOrdinateur(ListView):
     def dispatch(self, *args, **kwargs):
         """Permet d'imposer a toutes les fonction de cette classe de demander la connexion préalablement"""
         return super(ListeOrdinateur, self).dispatch(*args, **kwargs)
+
+def editionA(request, adhrId):
+    adhr = get_object_or_404(Adherent, pk=adhrId)
+    localId = adhrId
+
+    if request.method == 'POST':
+        form = AdherentForm(request.POST)
+        MACsForm = formset_factory(MacForm)
+        formset = MACsForm(request.POST)
+        if form.is_valid():
+            if formset.is_valid():
+                print(form.cleaned_data)
+            """else:
+                print(formset.errors)
+        else:
+            print(form.errors)"""
+    else:
+        form = AdherentForm(initial={'nom': adhr.nom, 'prenom': adhr.prenom})
+        MACsForm = formset_factory(MacForm, extra=adhr.listeOrdinateur.count())
+        formset = MacForm()
+
+    return render(request, "TEditionAdherent.html", locals())
