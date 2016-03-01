@@ -5,7 +5,7 @@ from django.utils.decorators import method_decorator
 from django.forms import formset_factory
 from .models import Adherent, Ordinateur
 from gestion.models import Payement, Utilisateur, Log, ConstanteNotFind
-from .forms import RezotageForm, AdherentForm, MacForm
+from .forms import RezotageForm, AdherentForm, MacForm, FormulaireAdherentComplet
 
 # Create your views here.
 
@@ -81,20 +81,17 @@ def editionA(request, adhrId):
     adhr = get_object_or_404(Adherent, pk=adhrId)
     localId = adhrId
 
-    if request.method == 'POST':
+    form = FormulaireAdherentComplet(adhr, request.POST)
+    """if request.method == 'POST':
         form = AdherentForm(request.POST)
         MACsForm = formset_factory(MacForm)
         formset = MACsForm(request.POST)
         if form.is_valid():
             if formset.is_valid():
                 print(form.cleaned_data)
-            """else:
-                print(formset.errors)
-        else:
-            print(form.errors)"""
     else:
         form = AdherentForm(initial={'nom': adhr.nom, 'prenom': adhr.prenom})
         MACsForm = formset_factory(MacForm, extra=adhr.listeOrdinateur.count())
-        formset = MacForm()
+        formset = MacForm()"""
 
     return render(request, "TEditionAdherent.html", locals())

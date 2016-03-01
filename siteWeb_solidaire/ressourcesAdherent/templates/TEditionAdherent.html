@@ -3,9 +3,9 @@
 {% block content %}
 <form action="{% url 'editionAdherent' localId %}" method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ form.mainForm.as_p }}
     {{ MACsForm.management_form }}
-    {%  for formItem in formset %}
+    {%  for formItem in form.listeForm %}
         {{ formItem }}<br/>
     {% endfor %}
     <input type="submit" value="Enregistrer les modifications">
