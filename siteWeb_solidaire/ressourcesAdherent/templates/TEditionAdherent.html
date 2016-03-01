@@ -4,7 +4,7 @@
 <form action="{% url 'editionAdherent' localId %}" method="post">
     {% csrf_token %}
     {{ form.mainForm.as_p }}
-    {{ MACsForm.management_form }}
+    {{ form.listeForm.management_form }}
     {%  for formItem in form.listeForm %}
         {{ formItem }}<br/>
     {% endfor %}

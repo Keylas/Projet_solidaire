@@ -82,6 +82,9 @@ def editionA(request, adhrId):
     localId = adhrId
 
     form = FormulaireAdherentComplet(adhr, request.POST)
+    print("On est ici")
+    if form.is_valid():
+        print("Youpi c'est un bon formulaire")
     """if request.method == 'POST':
         form = AdherentForm(request.POST)
         MACsForm = formset_factory(MacForm)

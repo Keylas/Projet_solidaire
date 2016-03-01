@@ -76,15 +76,25 @@ class FormulaireAdherentComplet():
         self.adherent = adherent
         if POSTrequest:
             self.mainForm = AdherentForm(POSTrequest)
-            formset = forms.formset_factory(MacForm, extra=0)
+            formset = forms.formset_factory(MacForm, max_num=0)
             self.listeForm = formset(POSTrequest)
         else:
             dicInit = {'nom': self.adherent.nom, 'prenom':self.adherent.prenom, 'mail':self.adherent.mail, 'chambre':self.adherent.chambre, 'rezoman':self.adherent.estRezoman}
             self.mainForm = AdherentForm(initial=dicInit)
-            formset = forms.formset_factory(MacForm, extra=0)
+            formset = forms.formset_factory(MacForm, max_num=0)
             data = []
             for ordi in self.adherent.listeOrdinateur.all():
                 data.append({'adresseMAC': ordi.adresseMAC})
-            print(data)
             self.listeForm = formset(initial=data)
-            print(self.listeForm)
+
+    def is_valid(self):
+        valide = True
+        if not self.mainForm.is_valid():
+            valide = False
+            print(str(self.mainForm.errors))
+        for forms in self.listeForm:
+            if not forms.is_valid():
+                valide = False
+                print(str(forms.errors))
+
+        return valide
