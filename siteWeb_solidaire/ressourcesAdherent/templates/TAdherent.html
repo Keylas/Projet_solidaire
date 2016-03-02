@@ -7,8 +7,8 @@
 			<span>{{ adherent.nom }} {{ adherent.prenom }}</span>
 			<span>{{ adherent.chambre }}</span>
 			<span>{{ adherent.dateExpiration|date }}</span>
-            <span><a href=#>Editer</a></span>
-            <span><a href=#>Nouveau Payement</a></span>
+            <span><a href="{% url 'editionAdherent' adherent.pk %}">Editer</a></span>
+            <span><a href="{% url 'page_creationP' adherent.pk %}">Nouveau Payement</a></span>
 		</p>
 	{% endfor %}
 {% endblock %}

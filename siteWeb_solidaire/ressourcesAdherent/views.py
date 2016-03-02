@@ -85,16 +85,7 @@ def editionA(request, adhrId):
     print("On est ici")
     if form.is_valid():
         print("Youpi c'est un bon formulaire")
-    """if request.method == 'POST':
-        form = AdherentForm(request.POST)
-        MACsForm = formset_factory(MacForm)
-        formset = MACsForm(request.POST)
-        if form.is_valid():
-            if formset.is_valid():
-                print(form.cleaned_data)
-    else:
-        form = AdherentForm(initial={'nom': adhr.nom, 'prenom': adhr.prenom})
-        MACsForm = formset_factory(MacForm, extra=adhr.listeOrdinateur.count())
-        formset = MacForm()"""
+        form.save(Utilisateur.getUtilisateur(request.user))
+        return redirect('affichageAdherent')
 
     return render(request, "TEditionAdherent.html", locals())

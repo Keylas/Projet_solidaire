@@ -1,6 +1,7 @@
 from django import forms
 import re
 from .models import Adherent, Ordinateur
+from gestion.models import Log
 
 class RezotageForm(forms.Form):
     nom = forms.CharField(label="Nom")
@@ -65,7 +66,7 @@ class MacForm(forms.Form):
 
     def clean_adresseMAC(self):
         mac = self.cleaned_data['adresseMAC']
-        print("On controle bien l'adresse MAC")
+        #print("On controle bien l'adresse MAC")
         if re.search(r'^([a-fA-F0-9]{2}[: ;]?){5}[a-fA-F0-9]{2}$', mac) is None:
             raise forms.ValidationError("Adresse MAC invalide")
 
@@ -74,18 +75,24 @@ class MacForm(forms.Form):
 class FormulaireAdherentComplet():
     def __init__(self, adherent, POSTrequest=None):
         self.adherent = adherent
+        dicInit = {'nom': self.adherent.nom, 'prenom': self.adherent.prenom, 'mail': self.adherent.mail, 'chambre': self.adherent.chambre, 'rezoman': self.adherent.estRezoman}
+        data = []
+        for ordi in self.adherent.listeOrdinateur.all():
+            data.append({'adresseMAC': ordi.adresseMAC})
+
         if POSTrequest:
-            self.mainForm = AdherentForm(POSTrequest)
-            formset = forms.formset_factory(MacForm, max_num=0)
-            self.listeForm = formset(POSTrequest)
+            self.mainForm = AdherentForm(POSTrequest, initial=dicInit)
+            formset = forms.formset_factory(MacForm, extra=0)
+            data.append({'adresseMAC': ''})
+            self.listeForm = formset(POSTrequest, initial=data)
         else:
-            dicInit = {'nom': self.adherent.nom, 'prenom':self.adherent.prenom, 'mail':self.adherent.mail, 'chambre':self.adherent.chambre, 'rezoman':self.adherent.estRezoman}
             self.mainForm = AdherentForm(initial=dicInit)
-            formset = forms.formset_factory(MacForm, max_num=0)
-            data = []
-            for ordi in self.adherent.listeOrdinateur.all():
-                data.append({'adresseMAC': ordi.adresseMAC})
+            formset = forms.formset_factory(MacForm, extra=1)
             self.listeForm = formset(initial=data)
+
+        for ordiA, ordiF in zip(self.adherent.listeOrdinateur.all(), self.listeForm):
+            ordiF.fields['adresseMAC'].label = "Ordinateur {0}".format(ordiA.nomDNS)
+        self.listeForm[-1].fields['adresseMAC'].label = "Nouvelle MAC (laisser vide si pas de nouvelle MAC)"
 
     def is_valid(self):
         valide = True
@@ -98,3 +105,31 @@ class FormulaireAdherentComplet():
                 print(str(forms.errors))
 
         return valide
+
+    def save(self, admin):
+        modif = False
+        if self.mainForm.has_changed():
+            #print(', '.join(self.mainForm.changed_data))
+            modif = True
+            self.adherent.nom = self.mainForm.cleaned_data['nom']
+            self.adherent.prenom = self.mainForm.cleaned_data['prenom']
+            self.adherent.mail = self.mainForm.cleaned_data['mail']
+            self.adherent.chambre = self.mainForm.cleaned_data['chambre']
+            self.adherent.estRezoman = self.mainForm.cleaned_data['rezoman']
+            self.adherent.save() #Exception de validation à gérer ici
+
+        for ordiA, ordiF in zip(self.adherent.listeOrdinateur.all(), self.listeForm):
+            if ordiF.has_changed():
+                ordiA.adresseMAC = ordiF.cleaned_data['adresseMAC']
+                ordiA.save()
+                modif = True
+
+        if self.listeForm[-1].has_changed():
+            modif = True
+            newPC = Ordinateur(proprietaire=self.adherent, adresseMAC=self.listeForm[-1].cleaned_data['adresseMAC'])
+            newPC.save()
+
+        if modif:
+            log = Log(editeur=admin, description="L'adhérent {0} à été mis à jour".format(self.adherent))
+            log.save()
+            print(log)

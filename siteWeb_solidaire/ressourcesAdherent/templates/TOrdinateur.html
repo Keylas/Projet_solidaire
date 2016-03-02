@@ -6,7 +6,7 @@
 			<span>{{ ordi.adresseIP }}</span>
 			<span>{{ ordi.adresseMAC }}</span>
 			<span>{{ ordi.proprietaire }}</span>
-            <span><a href=#>Editer</a></span>
+            <span><a href="{% url 'editionAdherent' ordi.proprietaire.pk %}">Editer</a></span>
 		</p>
 	{% endfor %}
 {% endblock %}
