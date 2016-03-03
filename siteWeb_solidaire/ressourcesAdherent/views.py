@@ -77,6 +77,7 @@ class ListeOrdinateur(ListView):
         """Permet d'imposer a toutes les fonction de cette classe de demander la connexion préalablement"""
         return super(ListeOrdinateur, self).dispatch(*args, **kwargs)
 
+@login_required
 def editionA(request, adhrId):
     adhr = get_object_or_404(Adherent, pk=adhrId)
     localId = adhrId
@@ -88,4 +89,13 @@ def editionA(request, adhrId):
         form.save(Utilisateur.getUtilisateur(request.user))
         return redirect('affichageAdherent')
 
+    listeZip = zip(form.listeForm, form.adherent.listeOrdinateur.all())
+    lastForm = form.listeForm[-1]
     return render(request, "TEditionAdherent.html", locals())
+
+@login_required
+def supressionOrdinateur(request, ordiPk):
+    ordi = get_object_or_404(Ordinateur, pk=ordiPk)
+
+    ordi.delete()
+    redirect('affichageOrdinateur')

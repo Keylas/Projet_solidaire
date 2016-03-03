@@ -5,9 +5,10 @@
     {% csrf_token %}
     {{ form.mainForm.as_p }}
     {{ form.listeForm.management_form }}
-    {%  for formItem in form.listeForm %}
-        {{ formItem }}<br/>
+    {%  for formItem, ordi in listeZip %}
+        {{ formItem }}<span><a href="{% url 'suppressionO' ordi.pk %}">Supprimer</a></span><br/>
     {% endfor %}
+    {{ lastForm }}<br/>
     <input type="submit" value="Enregistrer les modifications">
 </form>
 {%  endblock %}
