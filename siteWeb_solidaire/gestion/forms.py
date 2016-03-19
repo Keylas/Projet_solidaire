@@ -1,5 +1,6 @@
 from django import forms
-from .models import Payement, Log
+from .models import Payement, Log, User, Utilisateur, RoleRezoman
+from django.contrib.auth.models import Group
 from ressourcesAdherent.models import Adherent
 
 #Formulaire pour la page de connexion (il est assez explicite comme ça)
@@ -23,3 +24,31 @@ class PayementViewForm(forms.ModelForm):
         payement.save()
         log = Log(editeur=admin, description="Le payement {0} à été mis à jour".format(payement))
         log.save()
+
+class UtilisateurForm(forms.Form):
+    username = forms.CharField(label="Pseudonyme", widget=forms.TextInput(attrs={ 'required': 'true' }))
+    password1 = forms.CharField(label="Mot de passe", widget=forms.PasswordInput(attrs={ 'required': 'true' }))
+    password2 = forms.CharField(label="Retapez le mot de passe", widget=forms.PasswordInput(attrs={ 'required': 'true' }))
+    role = forms.ChoiceField(label="Role du rezoman", choices=((4, "Membre"), (1, "Président"), (2, "Trésorier"), (3, "Secretaire")))
+
+    def clean(self):
+        cleaned_data = super(UtilisateurForm, self).clean()
+        password = self.cleaned_data.get('password1')
+        passwordConfirm = self.cleaned_data.get('password2')
+
+        if password != passwordConfirm:
+            self.add_error('password2', "Password incorrect")
+
+        return cleaned_data
+
+    def save(self):
+        user = User.objects.create_user(self.cleaned_data['username'], "", self.cleaned_data['password'])
+        utili = Utilisateur(user=user, role=self.cleaned_data['role'])
+        utili.save()
+
+        if utili.role == RoleRezoman.MEMBRE:
+            utili.user.groups.add(Group.objects.get(name="Membre"))
+        else:
+            utili.user.groups.add(Group.objects.get(name="MembreBureau"))
+
+        utili.user.save()

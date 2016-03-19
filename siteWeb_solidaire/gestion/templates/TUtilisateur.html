@@ -10,7 +10,7 @@
                 <span><a href=#>Editer</a></span>
             {% endif %}
             {% if group.name == "Superutilisateur" and utilisateur.user.username != "superuser" %}
-                <span><a href=#>Supprimer</a></span>
+                <span><a href={% url 'supprUtilisateur' utilisateur.pk %}>Supprimer</a></span>
             {% endif %}{% endwith %}
 		</p>
 	{% endfor %}

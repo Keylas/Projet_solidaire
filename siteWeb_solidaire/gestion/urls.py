@@ -9,6 +9,9 @@ urlpatterns = patterns('',
     url(r'^payement$', views.ListePayement.as_view(), name="page_payement"),
     url(r'^editionP/(?P<id>[0-9]+)$', views.editerPayement, name="page_editionP"),
     url(r'^creationP/(?P<adhrId>[0-9]+)$', views.creerPayement, name="page_creationP"),
+    url(r'^etiderEtatP/(?P<payement_id>[0-9]+)$', views.changerEtatPayement, name="page_etatP"),
     url(r'^utilisateur$', views.ListeUtilisateur.as_view(), name="page_utilisateur"),
+    url(r'^supprimerUtilisateur/(?P<utilisateur_id>[0-9]+)$', views.supprimerUtilisateur, name="supprUtilisateur"),
+    url(r'^creerUtilisateur$', views.creer_utilisateur, name="creationU")
 )
 
