@@ -83,6 +83,9 @@ class Utilisateur(models.Model):
             print("Session pour un utilisateur non reconnu,création de l'entité")
         return newUser
 
+    def parseRole(self):
+        return RoleRezoman.reverse(self.role)
+
 class Log(models.Model):
     """Entité des logs des activités des modérateurs"""
     class Meta:
@@ -140,7 +143,10 @@ class Payement(models.Model):
             jour = int(self.credit * cste2.value / cste1.value) # Sinon c'est un nouveau payement
 
         super(Payement, self).save(args, kwargs)  # On sauvegrade en BDD
-        self.beneficiaire.dateExpiration = self.beneficiaire.dateExpiration + timedelta(days=jour)# On ajoute le crédit
+        if self.beneficiaire.estValide:
+            self.beneficiaire.dateExpiration = self.beneficiaire.dateExpiration + timedelta(days=jour)# On ajoute le crédit
+        else:
+            self.beneficiaire.dateExpiration = datetime.now().date() + timedelta(days=jour)# Ou on initialise le crédit
         self.beneficiaire.save() # et on met à jour l'adhérent
 
 

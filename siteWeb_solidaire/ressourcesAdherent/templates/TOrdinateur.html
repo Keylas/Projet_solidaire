@@ -7,7 +7,7 @@
 			<span>{{ ordi.adresseMAC }}</span>
 			<span>{{ ordi.proprietaire }}</span>
             <span><a href="{% url 'editionAdherent' ordi.proprietaire.pk %}">Editer</a></span>
-            <span><a href="{% url 'supprimerO' ordi.pk %}">Supprimer</a></span>
+            <span><a href="{% url 'suppressionO' ordi.pk %}">Supprimer</a></span>
 		</p>
 	{% endfor %}
 {% endblock %}

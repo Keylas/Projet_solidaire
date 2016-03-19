@@ -24,6 +24,8 @@ class Adherent(models.Model):
     estValide = models.BooleanField(default=False,
                                     verbose_name="l'adherent est valide")  # Si l'adhérent à accès aux services du rezo.
 
+    identifiant = models.CharField(max_length=42, verbose_name="Identifiant du wifi", unique=True)
+
     def __str__(self):
         """Retourne une chaîne de caractère caractéristique de l'adhérent"""
         return "{0} ".format(self.nom).upper() + "{0}".format(self.prenom).capitalize()
@@ -67,6 +69,7 @@ class Ordinateur(models.Model):
     adresseIP = models.GenericIPAddressField(protocol='IpV4', verbose_name="IP dynamique", unique=True)
     proprietaire = models.ForeignKey(Adherent, verbose_name="Possesseur de l'ordinateur",
                                      related_name='listeOrdinateur')
+    carteWifi = models.BooleanField(verbose_name="Carte Wifi ?", default=False)
 
     @classmethod
     def genererListeInitiale(cls, taille=1024):
@@ -118,3 +121,7 @@ class Ordinateur(models.Model):
         # Obtention de l'adresse IP
         if not self.adresseIP:
             self.adresseIP = self.__class__.IP_pile.pop()
+
+    def delete(self, using=None):
+        self.__class__.IP_pile.a
+        super(Ordinateur, self.delete(using))

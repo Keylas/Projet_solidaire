@@ -83,9 +83,7 @@ def editionA(request, adhrId):
     localId = adhrId
 
     form = FormulaireAdherentComplet(adhr, request.POST)
-    print("On est ici")
     if form.is_valid():
-        print("Youpi c'est un bon formulaire")
         form.save(Utilisateur.getUtilisateur(request.user))
         return redirect('affichageAdherent')
 
@@ -98,4 +96,4 @@ def supressionOrdinateur(request, ordiPk):
     ordi = get_object_or_404(Ordinateur, pk=ordiPk)
 
     ordi.delete()
-    redirect('affichageOrdinateur')
+    return redirect('affichageOrdinateur')

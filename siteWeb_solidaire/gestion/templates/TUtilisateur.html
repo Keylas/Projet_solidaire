@@ -1,0 +1,17 @@
+{% extends "layoutAffichage.html" %}
+{% block titre %}Gestion des utilisateurs{% endblock %}
+{% block tableauAffichage %}
+	{% for utilisateur in liste_utilisateur %}
+		<p>
+			<span>{{ utilisateur.user.username }}</span>
+			<span>{{ utilisateur.parseRole }}</span>
+            {%  with group=user.groups.all|first %}
+            {% if user.username == utilisateur.user.username or group.name == "Superutilisateur" %}
+                <span><a href=#>Editer</a></span>
+            {% endif %}
+            {% if group.name == "Superutilisateur" and utilisateur.user.username != "superuser" %}
+                <span><a href=#>Supprimer</a></span>
+            {% endif %}{% endwith %}
+		</p>
+	{% endfor %}
+{% endblock %}

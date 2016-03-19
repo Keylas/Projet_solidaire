@@ -71,3 +71,13 @@ def creerPayement(request, adhrId):
 
     #Et on génère la page
     return render(request, 'TCreationPayement.html', locals())
+
+class ListeUtilisateur(ListView):
+    model = Utilisateur
+    context_object_name = "liste_utilisateur"
+    template_name = "TUtilisateur.html"
+
+    #Fonction qui sert a demander une session pour accéder au pages de la classe
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ListeUtilisateur, self).dispatch(*args, **kwargs)
