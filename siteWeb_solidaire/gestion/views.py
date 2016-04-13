@@ -1,10 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.core.exceptions import PermissionDenied
+from pip.download import user_agent
+
 from .models import Log, Payement, Utilisateur, EtatPayement
-from .forms import PayementViewForm, UtilisateurForm
+from .forms import PayementViewForm, UtilisateurForm, UtilisateurEditionForm
 from ressourcesAdherent.models import Adherent
 
 
@@ -115,7 +117,7 @@ def supprimerUtilisateur(request, utilisateur_id):
     utili.delete()
     return redirect('page_utilisateur')
 
-@login_required()
+@login_required
 def creer_utilisateur(request):
     if request.user.username != "superuser":
         raise PermissionDenied
@@ -128,3 +130,15 @@ def creer_utilisateur(request):
     else:
         form = UtilisateurForm()
     return render(request, "TCreationUser.html", locals())
+
+@login_required
+def editerUtilisateur(request, userId):
+    utili = get_object_or_404(Utilisateur, pk=userId)
+    if request.user.username != "superuser" and utili.user != request.user:
+        raise PermissionDenied
+
+    form = UtilisateurEditionForm(utili, request.POST)
+    if form.is_valid():
+        form.editer(Utilisateur.getUtilisateur(request.user))
+        return redirect('page_utilisateur')
+    return render(request, "TEditionUser.html", locals())

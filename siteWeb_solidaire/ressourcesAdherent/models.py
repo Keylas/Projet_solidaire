@@ -63,6 +63,7 @@ class Ordinateur(models.Model):
     """Model des objets représentant les ordinateurs. Ils definissent l'IP et la MAC du PC autorisé"""
 
     nomDNS = models.CharField(max_length=20, primary_key=True, verbose_name="nom indice du PC")
+    DNSactif = models.BooleanField(verbose_name="non DNS actif ?", default=False)
     adresseMAC = models.CharField(max_length=17, validators=[
         RegexValidator(regex=r'^([a-fA-F0-9]{2}[: ;]?){5}[a-fA-F0-9]{2}$', message="Adresse MAC invalide")],
                                   verbose_name="Adresse MAC")
@@ -70,6 +71,7 @@ class Ordinateur(models.Model):
     proprietaire = models.ForeignKey(Adherent, verbose_name="Possesseur de l'ordinateur",
                                      related_name='listeOrdinateur')
     carteWifi = models.BooleanField(verbose_name="Carte Wifi ?", default=False)
+
 
     @classmethod
     def genererListeInitiale(cls, taille=1024):

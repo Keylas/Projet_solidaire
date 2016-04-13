@@ -26,10 +26,10 @@ class PayementViewForm(forms.ModelForm):
         log.save()
 
 class UtilisateurForm(forms.Form):
-    username = forms.CharField(label="Pseudonyme", widget=forms.TextInput(attrs={ 'required': 'true' }))
-    password1 = forms.CharField(label="Mot de passe", widget=forms.PasswordInput(attrs={ 'required': 'true' }))
-    password2 = forms.CharField(label="Retapez le mot de passe", widget=forms.PasswordInput(attrs={ 'required': 'true' }))
-    role = forms.ChoiceField(label="Role du rezoman", choices=((4, "Membre"), (1, "Président"), (2, "Trésorier"), (3, "Secretaire")))
+    username = forms.CharField(label="Pseudonyme", widget=forms.TextInput(attrs={'required': 'true'}))
+    password1 = forms.CharField(label="Mot de passe", widget=forms.PasswordInput(attrs={'required': 'true'}))
+    password2 = forms.CharField(label="Retapez le mot de passe", widget=forms.PasswordInput(attrs={'required': 'true'}))
+    role = forms.ChoiceField(label="Role du rezoman", choices=RoleRezoman.genererTuples())
 
     def clean(self):
         cleaned_data = super(UtilisateurForm, self).clean()
@@ -42,13 +42,53 @@ class UtilisateurForm(forms.Form):
         return cleaned_data
 
     def save(self):
-        user = User.objects.create_user(self.cleaned_data['username'], "", self.cleaned_data['password'])
+        user = User.objects.create_user(self.cleaned_data['username'], "", self.cleaned_data['password1'])
         utili = Utilisateur(user=user, role=self.cleaned_data['role'])
+        utili.user.save()
         utili.save()
 
-        if utili.role == RoleRezoman.MEMBRE:
-            utili.user.groups.add(Group.objects.get(name="Membre"))
-        else:
-            utili.user.groups.add(Group.objects.get(name="MembreBureau"))
+class UtilisateurEditionForm(forms.Form):
+    username = forms.CharField(label="Pseudonyme", widget=forms.TextInput(attrs={'required': 'true'}))
+    password1 = forms.CharField(label="Changement de mot de passe", widget=forms.PasswordInput(), required=False)
+    password2 = forms.CharField(label="Retapez le mot de passe", widget=forms.PasswordInput(), required=False)
+    role = forms.ChoiceField(label="Role du rezoman", choices=RoleRezoman.genererTuples())
 
-        utili.user.save()
+    email = forms.EmailField(label="Mail", required=False)
+    nom = forms.CharField(label="Nom du rezoman", required=False)
+    prenom = forms.CharField(label="Prenom", required=False)
+
+    def __init__(self, utilisateur, requestPost=None):
+        self.utili = utilisateur
+        self.dicInit = {'username': utilisateur.user.username, 'role': utilisateur.role, 'email': utilisateur.user.email,
+                   'nom': utilisateur.user.last_name, 'prenom': utilisateur.user.first_name}
+        if requestPost:
+            super(UtilisateurEditionForm, self).__init__(requestPost, initial=self.dicInit)
+        else:
+            super(UtilisateurEditionForm, self).__init__(initial=self.dicInit)
+
+    def clean(self):
+        cleaned_data = super(UtilisateurEditionForm, self).clean()
+        password = self.cleaned_data.get('password1')
+        passwordConfirm = self.cleaned_data.get('password2')
+
+        if password != passwordConfirm:
+            self.add_error('password2', "Password incorrect")
+
+        return cleaned_data
+
+    def editer(self, admin):
+        if self.has_changed():
+            log = Log(editeur=admin, description="Le rezoman {0} à été mis à jour".format(self.utili))
+            self.utili.user.username = self.cleaned_data['username']
+            self.utili.user.email = self.cleaned_data['email']
+            self.utili.user.first_name = self.cleaned_data['prenom']
+            self.utili.user.last_name = self.cleaned_data['nom']
+            self.utili.role = self.cleaned_data['role']
+
+            if self.cleaned_data['password1'] != "":
+                #Mettre a joue le mot de passe !
+                print("On change le password !!")
+                print(self.cleaned_data['password1'])
+
+            self.utili.user.save()
+            self.utili.save()

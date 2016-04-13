@@ -2,7 +2,7 @@
 
 from django.db import models
 from django_enumfield import enum
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from ressourcesAdherent.models import Adherent
 from django.core.exceptions import ValidationError
 from datetime import datetime, date, timedelta
@@ -42,6 +42,10 @@ class RoleRezoman(enum.Enum):
             3: "Secrétaire",
             4: "Membre avec des supers pouvoirs",
         }.get(x, "Membre actif")
+
+    @classmethod
+    def genererTuples(cls):
+        return ((0, "Membre"), (1, "Président"), (2, "Trésorier"), (3, "Secretaire"))
 
 
 class EtatPayement(enum.Enum):
@@ -85,6 +89,19 @@ class Utilisateur(models.Model):
 
     def parseRole(self):
         return RoleRezoman.reverse(self.role)
+
+    def save(self, *args, **kwargs):
+        #Gerer le changement de status (detection des roles ne marche pas, recuperation des groupes ??)
+        if self.role == RoleRezoman.MEMBRE:
+            print("Membre")
+            #self.user.groups.add(Group.objects.get(name="Membre"))
+
+        else:
+            print("Bureau")
+            #self.user.groups.add(Group.objects.get(name="MembreBureau"))
+
+        self.user.save()
+        super(Utilisateur, self).save(*args, **kwargs)
 
 class Log(models.Model):
     """Entité des logs des activités des modérateurs"""
