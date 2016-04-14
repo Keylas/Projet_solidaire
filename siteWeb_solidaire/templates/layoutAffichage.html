@@ -1,6 +1,11 @@
 {% extends "layoutBase.html" %}
 {% block content %}
-	<div>{% block menuSecondaire %}{% endblock %}<input type="search" placeholder="Entrez un mot-clef" name="the_search" /></div>
+	<div>{% block menuSecondaire %}{% endblock %}
+        <form action='' method='get'><input type="search" placeholder="Entrez un mot-clef" name="the_search" />
+        <input type="submit" value="Rechercher"/></form>
+    </div>
 	{% block tableauAffichage %}{% endblock %}
-	<p>pagination</p>
+	{% if is_paginated %}
+        {% include 'pagination.html' %}
+    {% endif %}
 {% endblock %}

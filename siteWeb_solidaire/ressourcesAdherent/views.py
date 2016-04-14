@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.db.models import Q
 from django.forms import formset_factory
 from .models import Adherent, Ordinateur
 from gestion.models import Payement, Utilisateur, Log, ConstanteNotFind
@@ -11,14 +12,22 @@ from .forms import RezotageForm, AdherentForm, MacForm, FormulaireAdherentComple
 
 class ListeAdherent(ListView):
     """Vue de l'entité adherent représente par une classe générique de django"""
-    model = Adherent
+    #model = Adherent
     context_object_name = "liste_Adherent" # variable utilisé dans le templates pour la liste des adhérents
     template_name="TAdherent.html"
+    paginate_by = 50
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         """Permet d'imposer a toutes les fonction de cette classe de demander la connexion préalablement"""
         return super(ListeAdherent, self).dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        filtre = self.request.GET.get('the_search', '')
+        if(filtre == ''):
+            return Adherent.objects.all().order_by('nom', 'prenom')
+        return Adherent.objects.filter(Q(nom__icontains=filtre) | Q(prenom__icontains=filtre)|
+                                       Q(chambre__icontains=filtre)).order_by('nom', 'prenom')
 
 @login_required
 def rezotage(request):
@@ -68,14 +77,22 @@ def enregisterRezotage(form, utili):
     print("Formulaire déclaré valide")
 
 class ListeOrdinateur(ListView):
-    model = Ordinateur
+    #model = Ordinateur
     context_object_name = 'liste_Ordinateur'
     template_name = 'TOrdinateur.html'
+    paginate_by = 50
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         """Permet d'imposer a toutes les fonction de cette classe de demander la connexion préalablement"""
         return super(ListeOrdinateur, self).dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        filtre = self.request.GET.get('the_search', '')
+        if(filtre == ''):
+            return Ordinateur.objects.all().order_by('adresseIP')
+        return Ordinateur.objects.filter(Q(proprietaire__nom__icontains=filtre) | Q(proprietaire__prenom__icontains=filtre)|
+                                         Q(adresseIP__icontains=filtre)|Q(adresseMAC__icontains=filtre)).order_by('adresseIP')
 
 @login_required
 def editionA(request, adhrId):

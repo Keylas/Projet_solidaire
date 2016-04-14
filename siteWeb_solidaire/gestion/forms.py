@@ -86,9 +86,8 @@ class UtilisateurEditionForm(forms.Form):
             self.utili.role = self.cleaned_data['role']
 
             if self.cleaned_data['password1'] != "":
-                #Mettre a joue le mot de passe !
-                print("On change le password !!")
-                print(self.cleaned_data['password1'])
+                self.utili.user.set_password(self.cleaned_data['password1'])
 
             self.utili.user.save()
             self.utili.save()
+            log.save()

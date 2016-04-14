@@ -3,6 +3,7 @@ from django.views.generic import ListView, DetailView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.core.exceptions import PermissionDenied
+from django.db.models import Q
 from pip.download import user_agent
 
 from .models import Log, Payement, Utilisateur, EtatPayement
@@ -12,27 +13,42 @@ from ressourcesAdherent.models import Adherent
 
 # Classe qui génère la vue d'affichage des logs avec le template de l'accueil
 class ListeLog(ListView):
-    model = Log
+    #model = Log
     context_object_name = "liste_Log"
     template_name = "accueil.html"
+    paginate_by = 20
 
     # Fonction qui sert a demander une session pour accéder au pages de la classe
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(ListeLog, self).dispatch(*args, **kwargs)
 
+    def get_queryset(self):
+        filtre = self.request.GET.get('the_search', '')
+        if(filtre == ''):
+            return Log.objects.all().order_by('-date')
+        return Log.objects.filter(Q(editeur__user__username__icontains=filtre)|Q(description__icontains=filtre)).order_by('-date')
+
 
 # Classe qui génère la vue d'affichage des différents payements.
 class ListePayement(ListView):
-    model = Payement
+    #model = Payement
     context_object_name = "liste_Payement"
     template_name = "TPayement.html"
     ordering = ['dateCreation']
+    paginate_by = 30
 
     # Fonction qui sert a demander une session pour accéder au pages de la classe
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(ListePayement, self).dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        filtre = self.request.GET.get('the_search', '')
+        if(filtre == ''):
+            return Payement.objects.all().order_by('-dateCreation')
+        return Payement.objects.filter(Q(beneficiaire__nom__icontains=filtre)|Q(beneficiaire__prenom__icontains=filtre)|
+                    Q(rezoman__user__username__icontains=filtre)|Q(banque__icontains=filtre)).order_by('-dateCreation')
 
 
 # vue pour l'édition d'un payement défini par Id
@@ -70,6 +86,9 @@ def creerPayement(request, adhrId):
             form.instance.beneficiaire = adhr
             form.instance.rezoman = Utilisateur.getUtilisateur(request.user)
             form.save()
+            log = Log(editeur=Utilisateur.getUtilisateur(request.user),
+                      description="Nouveau payement de {0} euros pour {1}".format(form.instance.credit, form.instance.beneficiaire))
+            log.save()
             return redirect('affichageAdherent')  # et on retourne sur la page des adhérent
     else:
         form = PayementViewForm()  # Sinon on envoie un formulaire vide pour créer le payement
@@ -83,7 +102,9 @@ def changerEtatPayement(request, payement_id):
 
     if payement.etat == EtatPayement.DECLARE:
         payement.etat = EtatPayement.RECEPTIONNE
+        Log.create(editeur=Utilisateur.getUtilisateur(request.user), description="Le Payement de {0} a été receptionné".format(payement.beneficiaire))
     elif payement.etat == EtatPayement.RECEPTIONNE:
+        Log.create(editeur=Utilisateur.getUtilisateur(request.user), description="Le Payement de {0} a été encaissé".format(payement.beneficiaire))
         payement.etat = EtatPayement.ENCAISSE
 
     payement.save()
@@ -93,11 +114,18 @@ class ListeUtilisateur(ListView):
     model = Utilisateur
     context_object_name = "liste_utilisateur"
     template_name = "TUtilisateur.html"
+    paginate_by = 25
 
     # Fonction qui sert a demander une session pour accéder au pages de la classe
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(ListeUtilisateur, self).dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        filtre = self.request.GET.get('the_search', '')
+        if(filtre == ''):
+            return Utilisateur.objects.all().order_by('user__username')
+        return Utilisateur.objects.filter(Q(user__username__icontains=filtre)).order_by('user__username')
 
 @login_required
 def supprimerUtilisateur(request, utilisateur_id):

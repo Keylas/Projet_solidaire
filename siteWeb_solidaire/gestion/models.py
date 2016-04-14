@@ -92,13 +92,15 @@ class Utilisateur(models.Model):
 
     def save(self, *args, **kwargs):
         #Gerer le changement de status (detection des roles ne marche pas, recuperation des groupes ??)
-        if self.role == RoleRezoman.MEMBRE:
+        #print(self.role)
+        #print(RoleRezoman.MEMBRE)
+        if self.role == str(RoleRezoman.MEMBRE):
             print("Membre")
-            #self.user.groups.add(Group.objects.get(name="Membre"))
+            self.user.groups = [Group.objects.get(name="Membre")]
 
         else:
             print("Bureau")
-            #self.user.groups.add(Group.objects.get(name="MembreBureau"))
+            self.user.groups = [Group.objects.get(name="MembreBureau")]
 
         self.user.save()
         super(Utilisateur, self).save(*args, **kwargs)
