@@ -1,18 +1,18 @@
 <nav>
 	<ul>
-		<li><a href="{% url 'page_accueil' %}"> Acceuil </a></li>
+		<li><a href="{% url 'page_accueil' %}"> Accueil </a></li>
 		<li> Gestion des Adherent<ul>
-			<li><a href=#>Rezotage</a></li>
-			<li><a href=#>Adherent</a></li>
-			<li><a href=#>Ordinateur</a></li>
+			<li><a href={% url 'pageRezotage' %}>Rezotage</a></li>
+			<li><a href={% url 'affichageAdherent' %}>Adherent</a></li>
+			<li><a href={% url 'affichageOrdinateur' %}>Ordinateur</a></li>
 		</ul></li>
 		<li> Administration <ul>
-			<li><a href=#>Trésorerie</a></li>
-			<li><a href=#>Gestion des administrateurs</a></li>
+			<li><a href={% url 'page_payement' %}>Trésorerie</a></li>
+			<li><a href={%  url 'page_utilisateur' %}>Gestion des administrateurs</a></li>
 		</ul></li>
 		<li> Services <ul>
-			<li><a href=#>Mailing</a></li>
-			<li><a href=#>Nom DNS</a></li>
+			<li><a href={% url 'page_mailing' %}>Mailing</a></li>
+			<li><a href={% url 'page_DNS' %}>Nom DNS</a></li>
 		</ul></li>
 		<li><a href="{% url 'lien_logout' %}">Deconnexion</a>
 	</ul>

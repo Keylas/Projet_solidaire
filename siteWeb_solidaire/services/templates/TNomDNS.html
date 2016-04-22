@@ -1,0 +1,14 @@
+{% extends "layoutAffichage.html" %}
+{% block titre %}Gestion des Nom DNS{% endblock %}
+{% block tableauAffichage %}
+	{% for ordi in liste_ordinateur %}
+		<p>
+			<span>{{ ordi.nomDNS }}</span>
+			<span>{{ ordi.proprietaire }}</span>
+            <span>{{ ordi.DNSactif }}</span>
+            <span>{{ ordi.adresseMAC }}</span>
+            <span><a href={% url 'change_DNS' ordi.pk %}>
+                        {% if ordi.DNSactif %}Desactiver le nom DNS{% else %}Activer le nom DNS{% endif %}</a></span>
+		</p>
+	{% endfor %}
+{% endblock %}

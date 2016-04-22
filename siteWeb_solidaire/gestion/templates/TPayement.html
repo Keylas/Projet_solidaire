@@ -1,0 +1,20 @@
+{% extends "layoutAffichage.html" %}
+{% block menuSecondaire %}<a href={% url 'encaisserC' %}>Encaisser les chèques</a>
+    <a href={% url 'encaisserL' %}>Encaisser le liquide</a>{% endblock %}
+{% block titre %}Gestion de la trésorerie{% endblock %}
+{% block tableauAffichage %}
+	{% for payement in liste_Payement %}
+		<p>
+			<span>{{ payement.etat }}</span>
+			<span>{{ payement.beneficiaire }}</span>
+			<span>{{ payement.credit }}</span>
+            <span>{{ payement.montantRecu }}</span>
+            <span>{{ payement.banque }}</span>
+            <span><a href={% url 'page_editionP' payement.pk %}>Editer</a></span>
+            <span><a href={% url 'page_etatP' payement.pk %}>
+                    {% if payement.etat == 0 %}Recevoir
+                    {% elif payement.etat == 1 %}Encaisser
+            {% endif %}</a></span>
+		</p>
+	{% endfor %}
+{% endblock %}

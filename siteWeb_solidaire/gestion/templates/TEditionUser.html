@@ -1,0 +1,9 @@
+{% extends 'layoutBase.html' %}
+{% block titre %}Edition du rezoman {{ utili }}{% endblock %}
+{% block content %}
+<form action={% url 'page_editionU' utili.pk %} method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Enregistrer les modifications">
+</form>
+{%  endblock %}

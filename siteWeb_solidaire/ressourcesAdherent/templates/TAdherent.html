@@ -1,0 +1,14 @@
+{% extends "layoutAffichage.html" %}
+{% block titre %}Liste des Adherents{% endblock %}
+{% block tableauAffichage %}
+	{% for adherent in liste_Adherent %}
+		<p>
+            <span style="min-width:20px; background-color: {% if adherent.estValide %}green{% else %}red{% endif %};"></span>
+			<span>{{ adherent.nom }} {{ adherent.prenom }}</span>
+			<span>{{ adherent.chambre }}</span>
+			<span>{{ adherent.dateExpiration|date }}</span>
+            <span><a href="{% url 'editionAdherent' adherent.pk %}">Editer</a></span>
+            <span><a href="{% url 'page_creationP' adherent.pk %}">Nouveau Payement</a></span>
+		</p>
+	{% endfor %}
+{% endblock %}

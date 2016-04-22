@@ -1,5 +1,6 @@
 apt-get install python3
 apt-get install postgresql
+apt-get install postgresql-server-dev-all
 apt-get install python3-pip
 apt-get install git
 #apt-get install screen
@@ -10,3 +11,4 @@ pip3 install django-enumfield
 #(pip3 install pillow)
 pip3 install psycopg2
 pip3 install pytz (module temps/fuseau horraire)
+pip3 install pexpect
