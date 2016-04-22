@@ -154,6 +154,9 @@ class Payement(models.Model):
             print("ERREUR : les constantes ne sont pas recupérable")
             raise ConstanteNotFind("Les constantes ne sont pas accessible")
 
+        #On verifie si le payement est par chèques ou en liquide
+        if self.banque is None or self.banque == '' or self.banque == "":
+            self.banque = "Liquide"
         # On verifie si le payement existe deja, dans ce cas c'est une modification
         try:
             payementAnt = Payement.objects.get(pk=self.pk) # On récupère l'ancien payement

@@ -11,6 +11,7 @@ class RezotageForm(forms.Form):
 
     # rezoman = forms.BooleanField(label="Rezoman", required=False)
     chambre = forms.CharField(label="Chambre", max_length=4)
+    identifiantWifi = forms.CharField(max_length=42, label="ID pour le Wifi de la rez")
     premiereMAC = forms.CharField(label="MAC principale", max_length=17)
 
     payementRecu = forms.DecimalField(label="Montant Réel", min_value=0.0, decimal_places=2)

@@ -5,7 +5,13 @@ from django_enumfield import enum
 from django.utils import timezone
 from django.core.validators import RegexValidator, MinValueValidator
 from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
+from smtplib import SMTPException
 import unicodedata
+import hashlib
+import hmac
+import random
+import string
 
 
 class Adherent(models.Model):
@@ -25,6 +31,7 @@ class Adherent(models.Model):
                                     verbose_name="l'adherent est valide")  # Si l'adhérent à accès aux services du rezo.
 
     identifiant = models.CharField(max_length=42, verbose_name="Identifiant du wifi", unique=True)
+    passwordWifi = models.BinaryField(max_length=1000, verbose_name="Mot de passe pour le Wifi (encrypt0é)", default=b'')
 
     def __str__(self):
         """Retourne une chaîne de caractère caractéristique de l'adhérent"""
@@ -36,7 +43,7 @@ class Adherent(models.Model):
         self.estValide = (self.dateExpiration >= timezone.now().date())
         self.nom = self.nom.upper()
         self.prenom = self.prenom.capitalize()
-
+        adhr = None
         # Controle de l'etat de la chambre pour la libérer si nécéssaire.
         if self.chambre:  # Si la chambre n'est pas vide (renseigner)
             try:  # On verifie si la chambre est déjà assigné pour la vider dans ce cas
@@ -45,6 +52,15 @@ class Adherent(models.Model):
                 adhr.save()
             except Adherent.DoesNotExist:  # Cas ou la chambre est libre
                 pass
+
+        if(self.passwordWifi == b'' or self.passwordWifi is None or adhr is not None and self.identifiant != adhr.identifiant):
+            chaine = id_generator(10)
+            self.passwordWifi = create_NT_hashed_password_v2(chaine, self.identifiant, "rezo") #fout la merde avec le binaire/string
+            try:
+                send_mail("Mot de passe Wifi", "Bonjour,\n Ceci est votre mot de passe pour la connexion Wifi du rezo : {0}".format(chaine),
+                          "rezoWifi@rez.fr", ["{0}".format(self.mail)], fail_silently=False)
+            except SMTPException:
+                print("Erreur lors de l'envoi du mail")
 
         # On finit les controles puis on sauvegarde.
         try:
@@ -58,6 +74,13 @@ class Adherent(models.Model):
         exclude.append('chambre')  # On ajoute la chambre au champs dont on ne verifie pas l'unicité.
         super(Adherent, self).validate_unique(exclude)
 
+def id_generator(size, chars=string.ascii_uppercase + string.digits+string.ascii_lowercase):
+    return ''.join(random.SystemRandom().choice(chars) for _ in range(size))
+
+def create_NT_hashed_password_v2(passwd, user, domain):
+    "create NT hashed password"
+    digests = hashlib.new('md4', passwd.encode('utf-16le')).digest()
+    return hmac.new(digests, (user.upper()+domain).encode('utf-16le')).digest()
 
 class Ordinateur(models.Model):
     """Model des objets représentant les ordinateurs. Ils definissent l'IP et la MAC du PC autorisé"""

@@ -11,8 +11,8 @@
 			<li><a href={%  url 'page_utilisateur' %}>Gestion des administrateurs</a></li>
 		</ul></li>
 		<li> Services <ul>
-			<li><a href=#>Mailing</a></li>
-			<li><a href={%  url 'page_DNS' %}>Nom DNS</a></li>
+			<li><a href={% url 'page_mailing' %}>Mailing</a></li>
+			<li><a href={% url 'page_DNS' %}>Nom DNS</a></li>
 		</ul></li>
 		<li><a href="{% url 'lien_logout' %}">Deconnexion</a>
 	</ul>

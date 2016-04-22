@@ -1,0 +1,12 @@
+{% extends "layoutAffichage.html" %}
+{% block titre %}Liste des mailing{% endblock %}
+{% block tableauAffichage %}
+	{% for mailing in liste_mailing %}
+		<p>
+			<span>{{ mailing.adresse }}</span>
+			<span>{{ mailing.referant }}</span>
+            <span>{{ mailing.listeAdherent|length }}</span>
+            <span><a href=#>Editer</a></span>
+		</p>
+	{% endfor %}
+{% endblock %}

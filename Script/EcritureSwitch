@@ -28,7 +28,7 @@ class SwitchWriter():
     @classmethod
     def remplir(cls, chaine):
         cls.mutex.acquire()
-        if cls.instruction is null:
+        if cls.instruction is None:
             cls.timer = Timer(cls.tpsAttente, cls.ecrire)
             cls.timer.start()
         cls.instruction.__add__(chaine)

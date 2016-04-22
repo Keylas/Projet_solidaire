@@ -46,10 +46,12 @@ def rezotage(request):
 def enregisterRezotage(form, utili):
     """Fonction qui traite le formulaire et enregistre les objects"""
     #On crée l'adhérent et on l'enregistre
-    adhr = Adherent(nom=form.cleaned_data['nom'], prenom=form.cleaned_data['prenom'], mail=form.cleaned_data['mail'], chambre=form.cleaned_data['chambre'])
+    adhr = Adherent(nom=form.cleaned_data['nom'], prenom=form.cleaned_data['prenom'], mail=form.cleaned_data['mail'],
+                    chambre=form.cleaned_data['chambre'], identifiant=form.cleaned_data['identifiantWifi'])
     adhr.save()
     #On crée le payement en verifiant la source de payement
-    payement = Payement(credit=form.cleaned_data['payementFictif'], montantRecu=form.cleaned_data['payementRecu'], commentaire=form.cleaned_data['commentaire'])
+    payement = Payement(credit=form.cleaned_data['payementFictif'], montantRecu=form.cleaned_data['payementRecu'],
+                        commentaire=form.cleaned_data['commentaire'])
     chaine = form.cleaned_data['sourcePayement']
     if not chaine:
         chaine = "Liquide"

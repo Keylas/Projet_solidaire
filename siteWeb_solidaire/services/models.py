@@ -13,9 +13,9 @@ class Mailing(models.Model):
         return "Mailing {0} géré par {1}".format(self.adresse, self.referant)
 
     def save(self, *argc, **argv):
+        super(Mailing, self).save(*argc, **argv)
         try:
             self.listeAdherent.get(pk=self.referant.pk)
-        except self.DoesNotExist:
+        except Adherent.DoesNotExist:
             self.listeAdherent.add(self.referant)
-
-        super(self, Mailing).save(*argc, **argv)
+            super(Mailing, self).save(*argc, **argv)

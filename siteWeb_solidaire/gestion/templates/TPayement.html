@@ -1,4 +1,6 @@
 {% extends "layoutAffichage.html" %}
+{% block menuSecondaire %}<a href={% url 'encaisserC' %}>Encaisser les chèques</a>
+    <a href={% url 'encaisserL' %}>Encaisser le liquide</a>{% endblock %}
 {% block titre %}Gestion de la trésorerie{% endblock %}
 {% block tableauAffichage %}
 	{% for payement in liste_Payement %}

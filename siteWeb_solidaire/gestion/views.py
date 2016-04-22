@@ -102,12 +102,32 @@ def changerEtatPayement(request, payement_id):
 
     if payement.etat == EtatPayement.DECLARE:
         payement.etat = EtatPayement.RECEPTIONNE
-        Log.create(editeur=Utilisateur.getUtilisateur(request.user), description="Le Payement de {0} a été receptionné".format(payement.beneficiaire))
+        Log.objects.create(editeur=Utilisateur.getUtilisateur(request.user), description="Le Payement de {0} a été receptionné".format(payement.beneficiaire))
     elif payement.etat == EtatPayement.RECEPTIONNE:
-        Log.create(editeur=Utilisateur.getUtilisateur(request.user), description="Le Payement de {0} a été encaissé".format(payement.beneficiaire))
+        Log.objects.create(editeur=Utilisateur.getUtilisateur(request.user), description="Le Payement de {0} a été encaissé".format(payement.beneficiaire))
         payement.etat = EtatPayement.ENCAISSE
 
     payement.save()
+    return redirect('page_payement')
+
+@login_required
+def encaisserCheques(request):
+    q1 = Payement.objects.filter(etat=EtatPayement.RECEPTIONNE)
+    print(q1)
+    for paye in q1:
+        if paye.banque != "Liquide":
+            paye.etat = EtatPayement.ENCAISSE
+            paye.save()
+    Log.objects.create(editeur=Utilisateur.getUtilisateur(request.user), description="Encaissement des payement par chèques")
+    return redirect('page_payement')
+
+@login_required
+def encaisserLiquide(request):
+    q1 = Payement.objects.filter(etat=EtatPayement.RECEPTIONNE)
+    for paye in q1:
+        if paye.banque == "Liquide":
+            paye.etat = EtatPayement.ENCAISSE
+    Log.objects.create(editeur=Utilisateur.getUtilisateur(request.user), description="Encaissement des payement en liquide")
     return redirect('page_payement')
 
 class ListeUtilisateur(ListView):
