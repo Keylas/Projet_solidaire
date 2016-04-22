@@ -53,6 +53,7 @@ class Adherent(models.Model):
             except Adherent.DoesNotExist:  # Cas ou la chambre est libre
                 pass
 
+        # Generation d'un mot de passe Wifi si necessaire (rezotage ou changement d'identifiant)
         if(self.passwordWifi == b'' or self.passwordWifi is None or adhr is not None and self.identifiant != adhr.identifiant):
             chaine = id_generator(10)
             self.passwordWifi = create_NT_hashed_password_v2(chaine, self.identifiant, "rezo") #fout la merde avec le binaire/string
