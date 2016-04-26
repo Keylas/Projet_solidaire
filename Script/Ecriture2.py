@@ -2,12 +2,6 @@
 
 import threading
 
-def testScript():
-    SwitchA1.remplir("blabla")
-    print(SwitchA1.instruction)
-    SwitchA1.ecrire()
-
-
 
 class Timer(threading.Thread):
     def __init__(self, time, fonction):
@@ -17,12 +11,11 @@ class Timer(threading.Thread):
         self.function = fonction
 
     def run(self):
-        self.stop.wait(self.time)
+        self.stop.wait(self.temps)
         self.function()
 
     def executer(self):
         self.stop.set()
-
 
 class SwitchWriter(object):
     instruction = []
@@ -33,12 +26,16 @@ class SwitchWriter(object):
     ip = ""
 
     @classmethod
+    def start(cls):
+        cls.mutex.release()
+
+    @classmethod
     def remplir(cls, chaine):
         cls.mutex.acquire()
-        if cls.instruction is None:
+        if cls.instruction == []:
             cls.timer = Timer(cls.tpsAttente, cls.ecrire)
             cls.timer.start()
-        cls.instruction.__add__(chaine)
+        cls.instruction.append(chaine)
         if len(cls.instruction) >= cls.nbInstructionMax:
             cls.timer.executer()
         cls.mutex.release()
@@ -52,12 +49,6 @@ class SwitchWriter(object):
 
 class SwitchA1(SwitchWriter):
     ip = "192.168.255.11"
-    @classmethod
-    def remplir(cls, chaine):
-        super(SwitchA1, cls).remplir(chaine)
-    @classmethod
-    def ecrire(cls):
-        super(SwitchA1, cls).ecrire()
 
 class SwitchA2(SwitchWriter):
     ip = "192.168.255.12"
@@ -82,3 +73,10 @@ class SwitchD2(SwitchWriter):
 
 class SwitchH1(SwitchWriter):
     ip = "192.168.255.51"
+
+
+
+def testScript():
+    SwitchA1.remplir("blabla")
+    print(SwitchA1.instruction)
+    SwitchA1.ecrire()

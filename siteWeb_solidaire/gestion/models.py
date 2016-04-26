@@ -32,9 +32,6 @@ class RoleRezoman(enum.Enum):
         SUPERMEMBRE: "Membre avec plus de pouvoir",
     }
 
-    def __str__(self):
-        return reverse(self)
-
     def reverse(x):
         return {
             1: "Président",
@@ -42,6 +39,9 @@ class RoleRezoman(enum.Enum):
             3: "Secrétaire",
             4: "Membre avec des supers pouvoirs",
         }.get(x, "Membre actif")
+
+    def __str__(self):
+        return reverse(self)
 
     @classmethod
     def genererTuples(cls):
@@ -164,12 +164,14 @@ class Payement(models.Model):
         except Payement.DoesNotExist:
             jour = int(self.credit * cste2.value / cste1.value) # Sinon c'est un nouveau payement
 
-        super(Payement, self).save(args, kwargs)  # On sauvegrade en BDD
-        if self.beneficiaire.estValide:
+        #On met a jour l'expiration de l'adhérent
+        if self.beneficiaire.estValide:#Si l'adhrérent rajoute du crédit
             self.beneficiaire.dateExpiration = self.beneficiaire.dateExpiration + timedelta(days=jour)# On ajoute le crédit
-        else:
+        else:#Sinon il commence son abonnement
             self.beneficiaire.dateExpiration = datetime.now().date() + timedelta(days=jour)# Ou on initialise le crédit
         self.beneficiaire.save() # et on met à jour l'adhérent
+        super(Payement, self).save(args, kwargs)  # On sauvegrade en BDD
+
 
 
 class Constante(models.Model):
