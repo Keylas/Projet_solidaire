@@ -1,5 +1,6 @@
 {% extends "layoutAffichage.html" %}
 {% block titre %}Liste des mailing{% endblock %}
+{% block menuSecondaire %}<a href={% url 'page_creationM' %}>Créer une mailing</a>{% endblock %}
 {% block tableauAffichage %}
 	{% for mailing in liste_mailing %}
 		<p>

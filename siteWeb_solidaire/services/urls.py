@@ -6,4 +6,5 @@ urlpatterns = patterns('',
     url(r'^gestionDNS$', views.ListeDNS.as_view(), name="page_DNS"),
     url(r'^switchDNS/(?P<ordiId>[0-9a-zA-Z]+)$', views.changeDNSactif, name="change_DNS"),
     url(r'^mailings$', views.MailingList.as_view(), name="page_mailing"),
+    url(r'^creermailing$', views.creerMailing, name="page_creationM"),
 )

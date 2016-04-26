@@ -44,6 +44,8 @@ class SwitchWriter(object):
     def ecrire(cls):
         cls.mutex.acquire()
         print('Appel du script d\'écriture sur {0}'.format(cls.ip))  # Script pour écrire sur le switch
+        for ins in cls.instruction:
+            print(ins)
         cls.instruction = []
         cls.mutex.release()
 
