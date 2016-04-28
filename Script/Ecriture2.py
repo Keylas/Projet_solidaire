@@ -20,10 +20,10 @@ class Timer(threading.Thread):
 class SwitchWriter(object):
     instruction = []
     timer = None
-    nbInstructionMax = 50
-    tpsAttente = 10
     mutex = threading.Lock()
     ip = ""
+    nbInstructionMax = 50
+    tpsAttente = 10
 
     @classmethod
     def start(cls):
@@ -50,35 +50,63 @@ class SwitchWriter(object):
         cls.mutex.release()
 
 class SwitchA1(SwitchWriter):
+    instruction = []
+    timer = None
+    mutex = threading.Lock()
     ip = "192.168.255.11"
 
 class SwitchA2(SwitchWriter):
+    instruction = []
+    timer = None
+    mutex = threading.Lock()
     ip = "192.168.255.12"
 
 class SwitchB1(SwitchWriter):
+    instruction = []
+    timer = None
+    mutex = threading.Lock()
     ip = "192.168.255.21"
 
 class SwitchB2(SwitchWriter):
+    instruction = []
+    timer = None
+    mutex = threading.Lock()
     ip = "192.168.255.22"
 
 class SwitchC1(SwitchWriter):
+    instruction = []
+    timer = None
+    mutex = threading.Lock()
     ip = "192.168.255.31"
 
 class SwitchC2(SwitchWriter):
+    instruction = []
+    timer = None
+    mutex = threading.Lock()
     ip = "192.168.255.32"
 
 class SwitchD1(SwitchWriter):
+    instruction = []
+    timer = None
+    mutex = threading.Lock()
     ip = "192.168.255.41"
 
 class SwitchD2(SwitchWriter):
+    instruction = []
+    timer = None
+    mutex = threading.Lock()
     ip = "192.168.255.42"
 
 class SwitchH1(SwitchWriter):
+    instruction = []
+    timer = None
+    mutex = threading.Lock()
     ip = "192.168.255.51"
 
 
 
 def testScript():
     SwitchA1.remplir("blabla")
+    SwitchA2.remplir("reblabla")
     print(SwitchA1.instruction)
-    SwitchA1.ecrire()
+    SwitchA2.timer.executer()
