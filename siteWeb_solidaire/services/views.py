@@ -51,3 +51,7 @@ class MailingList(ListView):
             return Mailing.objects.all().order_by('adresse')
         return Mailing.objects.filter(Q(adresse__icontains=filtre) | Q(referant__nom__icontains=filtre) |
                                       Q(referant__prenom__icontains=filtre)).order_by('adresse')
+
+def creerMailing(request):
+
+    return redirect('page_mailing')

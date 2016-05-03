@@ -1,9 +1,8 @@
 # coding=utf8
 
 from django.db import models
-from django_enumfield import enum
 from django.utils import timezone
-from django.core.validators import RegexValidator, MinValueValidator
+from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from smtplib import SMTPException
@@ -12,6 +11,7 @@ import hashlib
 import hmac
 import random
 import string
+
 
 
 class Adherent(models.Model):
@@ -43,16 +43,17 @@ class Adherent(models.Model):
         self.estValide = (self.dateExpiration >= timezone.now().date())
         self.nom = self.nom.upper()
         self.prenom = self.prenom.capitalize()
-        adhr = None
+        adhr = Adherent.objects.get(pk=self.pk)
         # Controle de l'etat de la chambre pour la libérer si nécéssaire.
-        if self.chambre:  # Si la chambre n'est pas vide (renseigner)
+        if self.chambre != adhr.chambre:  # Si la chambre n'est pas vide (renseigner)
             try:  # On verifie si la chambre est déjà assigné pour la vider dans ce cas
-                adhr = Adherent.objects.get(chambre=self.chambre)
-                adhr.chambre = None
-                adhr.save()
+                adhr2 = Adherent.objects.get(chambre=self.chambre)
+                adhr2.chambre = None
+                adhr2.save()
             except Adherent.DoesNotExist:  # Cas ou la chambre est libre
                 pass
 
+        # Generation d'un mot de passe Wifi si necessaire (rezotage ou changement d'identifiant)
         if(self.passwordWifi == b'' or self.passwordWifi is None or adhr is not None and self.identifiant != adhr.identifiant):
             chaine = id_generator(10)
             self.passwordWifi = create_NT_hashed_password_v2(chaine, self.identifiant, "rezo") #fout la merde avec le binaire/string
@@ -68,6 +69,9 @@ class Adherent(models.Model):
             super(Adherent, self).save(*argc, **argv)
         except ValidationError:
             pass
+        #On met a jour le système de coupure
+        if self.dateExpiration != adhr.dateExpiration:
+            MAJ_coupure(self.pk)
 
     def validate_unique(self, exclude=None):
         """Surcharge de la fonction originelle afin de ne pas controler ici l'unicité de la chambre"""
@@ -148,5 +152,8 @@ class Ordinateur(models.Model):
             self.adresseIP = self.__class__.IP_pile.pop()
 
     def delete(self, using=None):
+        """Supression de l'ordinateur, rajout de l'ip dans la pile des ip disponible"""
         self.__class__.IP_pile.a
         super(Ordinateur, self.delete(using))
+
+from .ScriptCoupure import editionAdherent as MAJ_coupure #Placé ici a cause de la double inclusion

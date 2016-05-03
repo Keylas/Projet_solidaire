@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'gestion',
     'ressourcesAdherent',
     'services',
+    'Script',
 )
 
 MIDDLEWARE_CLASSES = (
