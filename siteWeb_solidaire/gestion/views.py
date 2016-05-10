@@ -174,7 +174,7 @@ def creer_utilisateur(request):
         form = UtilisateurForm(request.POST)
         if form.is_valid():
             form.save()
-
+            return redirect('page_accueil')
     else:
         form = UtilisateurForm()
     return render(request, "TCreationUser.html", locals())

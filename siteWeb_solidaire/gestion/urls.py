@@ -2,7 +2,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib.auth import views as auth_views
 from . import views
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^connexion$', auth_views.login, {'template_name': 'connexion.html'}),
     url(r'^deconnexion$', auth_views.logout, {'next_page': '/gestion/connexion'}, name="lien_logout"),
     url(r'^accueil$', views.ListeLog.as_view(), name="page_accueil"),
@@ -16,5 +16,5 @@ urlpatterns = patterns('',
     url(r'^supprimerUtilisateur/(?P<utilisateur_id>[0-9]+)$', views.supprimerUtilisateur, name="supprUtilisateur"),
     url(r'^creerUtilisateur$', views.creer_utilisateur, name="creationU"),
     url(r'^editerUtilisateur/(?P<userId>[0-9]+)$', views.editerUtilisateur, name="page_editionU")
-)
+]
 
