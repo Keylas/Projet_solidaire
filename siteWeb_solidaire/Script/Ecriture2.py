@@ -103,7 +103,11 @@ class SwitchH1(SwitchWriter):
     mutex = threading.Lock()
     ip = "192.168.255.51"
 
-
+class SwitchB3(SwitchWriter):
+    instruction = []
+    timer = None
+    mutex = threading.Lock()
+    ip = "192.168.255.24"
 
 def testScript():
     SwitchA1.remplir("blabla")

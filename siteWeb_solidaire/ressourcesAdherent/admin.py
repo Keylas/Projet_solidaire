@@ -1,7 +1,7 @@
 # coding=utf8
 
 from django.contrib import admin
-from ressourcesAdherent.models import Adherent, Ordinateur
+from ressourcesAdherent.models import Adherent, Ordinateur, Chambre
 
 
 class adminAdherent(admin.ModelAdmin):
@@ -23,6 +23,11 @@ class adminOrdinateur(admin.ModelAdmin):
     description = "Ordinateur autorisé"
     exclude = ('nomDNS', 'adresseIP')
 
+class adminChambre(admin.ModelAdmin):
+    """Classe de gestion d'affichage de l'entité Chambre"""
+    list_display = ('numero', 'switch', 'port')
+    description = "Chambre de la résidence"
 
 admin.site.register(Adherent, adminAdherent)  # Link de l'entité Adhérent
 admin.site.register(Ordinateur, adminOrdinateur)  # Link de l'entité Ordinateur
+admin.site.register(Chambre, adminChambre) # Link de l'entité Chambre

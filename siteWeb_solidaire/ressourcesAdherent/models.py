@@ -13,15 +13,24 @@ import hmac
 import random
 import string
 
+class Chambre(models.Model):
+    numero = models.CharField(max_length=4, primary_key=True, verbose_name="Numéro de la chambre")
+    switch = models.CharField(max_length=2, verbose_name="Switch relie à la chambre")
+    port = models.IntegerField(verbose_name="Numéro de port de la chambre")
+
+    def __str__(self):
+        return "{0}".format(self.numero)
 
 class Adherent(models.Model):
     """Models des adhérents qui permet la gestion administrative"""
     nom = models.CharField(max_length=45, verbose_name="Nom de famille")
     prenom = models.CharField(max_length=30, verbose_name="Prénom")
     mail = models.EmailField(max_length=150, verbose_name="e-mail de contact")
-    chambre = models.CharField(max_length=4, verbose_name="Numéro de chambre", validators=[
-        RegexValidator(regex=r'^[A-DH][0-3]((0[0-9])|(1[0-3]))$', message="Erreur: cette chambre ne peut exister")],
-                               unique=True, null=True)
+    #chambre = models.CharField(max_length=4, verbose_name="Numéro de chambre", validators=[
+    #    RegexValidator(regex=r'^[A-DH][0-3]((0[0-9])|(1[0-3]))$', message="Erreur: cette chambre ne peut exister")],
+    #                            unique=True, null=True)
+    chambre = models.OneToOneField(Chambre, verbose_name="Chambre de l'adhérent", related_name='locataire', null=True)
+
     dateExpiration = models.DateField(verbose_name="Date de coupure de l'adhérent",
                                       default=timezone.now().date())  # date limite avant la coupure de l'adherent
     commentaire = models.TextField(blank=True, verbose_name="Commentaire sur l'adhérent")
@@ -43,15 +52,19 @@ class Adherent(models.Model):
         self.estValide = (self.dateExpiration >= timezone.now().date())
         self.nom = self.nom.upper()
         self.prenom = self.prenom.capitalize()
-        adhr = None
+        adhr = Adherent.objects.get(pk=self.pk)
         # Controle de l'etat de la chambre pour la libérer si nécéssaire.
-        if self.chambre:  # Si la chambre n'est pas vide (renseigner)
-            try:  # On verifie si la chambre est déjà assigné pour la vider dans ce cas
-                adhr = Adherent.objects.get(chambre=self.chambre)
-                adhr.chambre = None
-                adhr.save()
-            except Adherent.DoesNotExist:  # Cas ou la chambre est libre
-                pass
+        if self.chambre.locataire != adhr:
+            self.chambre.locataire.chambre = None
+            self.chambre.locataire.save()
+            # Si la chambre n'est pas vide (renseigner)
+            #try:  # On verifie si la chambre est déjà assigné pour la vider dans ce cas
+            #    adhr = Adherent.objects.get(chambre=self.chambre)
+            #    adhr.chambre = None
+            #    adhr.save()
+            #except Adherent.DoesNotExist:  # Cas ou la chambre est libre
+            #    pass
+            self.chambre.locataire
 
         if(self.passwordWifi == b'' or self.passwordWifi is None or adhr is not None and self.identifiant != adhr.identifiant):
             chaine = id_generator(10)
