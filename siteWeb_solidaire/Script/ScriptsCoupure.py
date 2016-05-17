@@ -21,10 +21,13 @@ def executerCoupure():
     Donnee.mutex.release()
     initialiserListe()
 
+def finii():
+    print("On coupe a cet instant : {0}".format(datetime.now().time()))
+
 def setTimer():
     tps = Donnee.dateCoupure - datetime.now()
     print("Coupure dans {0} seconds".format(tps.seconds))
-    Donnee.timer = threading.Timer(tps.seconds, print("On coupe a cet instant : {0}".format(datetime.now().time()))) #executerCoupure)
+    Donnee.timer = threading.Timer(tps.seconds, finii) #executerCoupure)
 
 
 def initialiserListe():
