@@ -23,7 +23,8 @@ def executerCoupure():
 
 def setTimer():
     tps = Donnee.dateCoupure - datetime.now()
-    Donnee.timer = threading.Timer(tps.seconds, executerCoupure)
+    print("Coupure dans {0} seconds".format(tps.seconds))
+    Donnee.timer = threading.Timer(tps.seconds, print("On coupe a cet instant : {0}".format(datetime.now().time()))) #executerCoupure)
 
 
 def initialiserListe():
