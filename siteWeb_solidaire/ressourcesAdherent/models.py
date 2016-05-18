@@ -1,8 +1,8 @@
 # coding=utf8
 
 from django.db import models
-from django_enumfield import enum
 from django.utils import timezone
+#from Script.ScriptsCoupure import modifAdherent
 from django.core.validators import RegexValidator, MinValueValidator
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail

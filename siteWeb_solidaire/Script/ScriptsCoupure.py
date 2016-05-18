@@ -1,4 +1,3 @@
-from ressourcesAdherent.models import Adherent
 from django.utils.timezone import datetime
 import threading
 
@@ -55,3 +54,4 @@ def modifAdherent(adhrId):
     except Adherent.DoesNotExist:
         pass
 
+from ressourcesAdherent.models import Adherent

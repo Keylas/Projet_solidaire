@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.db.models import Q
 from django.forms import formset_factory
-from .models import Adherent, Ordinateur
+from .models import Adherent, Ordinateur, Chambre
 from gestion.models import Payement, Utilisateur, Log, ConstanteNotFind
 from .forms import RezotageForm, AdherentForm, MacForm, FormulaireAdherentComplet
 
@@ -47,7 +47,13 @@ def enregisterRezotage(form, utili):
     """Fonction qui traite le formulaire et enregistre les objects"""
     #On crée l'adhérent et on l'enregistre
     adhr = Adherent(nom=form.cleaned_data['nom'], prenom=form.cleaned_data['prenom'], mail=form.cleaned_data['mail'],
-                    chambre=form.cleaned_data['chambre'], identifiant=form.cleaned_data['identifiantWifi'])
+                    identifiant=form.cleaned_data['identifiantWifi'])
+    try:
+        chambre = Chambre.objects.get(pk=form.cleaned_data['chambre'])
+    except Chambre.DoesNotExist:
+        print("erreur !!!")
+        return
+    adhr.chambre = chambre
     adhr.save()
     #On crée le payement en verifiant la source de payement
     payement = Payement(credit=form.cleaned_data['payementFictif'], montantRecu=form.cleaned_data['payementRecu'],
