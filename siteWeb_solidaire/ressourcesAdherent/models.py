@@ -2,7 +2,6 @@
 
 from django.db import models
 from django.utils import timezone
-#from Script.ScriptsCoupure import modifAdherent
 from django.core.validators import RegexValidator, MinValueValidator
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
@@ -52,9 +51,12 @@ class Adherent(models.Model):
         self.estValide = (self.dateExpiration >= timezone.now().date())
         self.nom = self.nom.upper()
         self.prenom = self.prenom.capitalize()
-        adhr = Adherent.objects.get(pk=self.pk)
+        try:
+            adhr = Adherent.objects.get(pk=self.pk)
+        except Adherent.DoesNotExist:
+            adhr=None
         # Controle de l'etat de la chambre pour la libérer si nécéssaire.
-        if self.chambre.locataire != adhr:
+        if adhr is not None and self.chambre.locataire != adhr:
             self.chambre.locataire.chambre = None
             self.chambre.locataire.save()
             # Si la chambre n'est pas vide (renseigner)

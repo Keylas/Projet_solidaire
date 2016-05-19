@@ -4,6 +4,7 @@ from django.db import models
 from django_enumfield import enum
 from django.contrib.auth.models import User, Group
 from ressourcesAdherent.models import Adherent
+from Script.ScriptsCoupure import modifAdherent
 from django.core.exceptions import ValidationError
 from datetime import datetime, date, timedelta
 
@@ -170,6 +171,7 @@ class Payement(models.Model):
         else:
             self.beneficiaire.dateExpiration = datetime.now().date() + timedelta(days=jour)# Ou on initialise le crédit
         self.beneficiaire.save() # et on met à jour l'adhérent
+        modifAdherent(self.beneficiaire.pk)
 
 
 class Constante(models.Model):
