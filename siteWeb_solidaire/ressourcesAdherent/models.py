@@ -1,5 +1,5 @@
+"""Fichier regroupant les entités lièe directement aux résidents : Chambre, Adherent et Ordinateur"""
 # coding=utf8
-
 from django.db import models
 from django.utils import timezone
 from django.core.validators import RegexValidator, MinValueValidator
@@ -13,33 +13,43 @@ import random
 import string
 
 class Chambre(models.Model):
+    """Entité qui represente une chambre de la résidence. Permet la conversion chambre->(switch,port)"""
     numero = models.CharField(max_length=4, primary_key=True, verbose_name="Numéro de la chambre")
     switch = models.CharField(max_length=2, verbose_name="Switch relie à la chambre")
     port = models.IntegerField(verbose_name="Numéro de port de la chambre")
 
     def __str__(self):
+        """Affichage de la chambre"""
         return "{0}".format(self.numero)
 
 class Adherent(models.Model):
     """Models des adhérents qui permet la gestion administrative"""
     nom = models.CharField(max_length=45, verbose_name="Nom de famille")
+    """Nom de famille de l'adhérent (transcripté automatiquement en majuscule)"""
     prenom = models.CharField(max_length=30, verbose_name="Prénom")
+    """Prénom de l'adhérent (La prmière lettre est automatiquement mise en majuscule, les autres en minuscule"""
     mail = models.EmailField(max_length=150, verbose_name="e-mail de contact")
+    """E-mail de l'adhérent, pour les mailing et l'envoi des mot de passe wifi"""
     #chambre = models.CharField(max_length=4, verbose_name="Numéro de chambre", validators=[
     #    RegexValidator(regex=r'^[A-DH][0-3]((0[0-9])|(1[0-3]))$', message="Erreur: cette chambre ne peut exister")],
     #                            unique=True, null=True)
     chambre = models.OneToOneField(Chambre, verbose_name="Chambre de l'adhérent", related_name='locataire', null=True)
-
+    """Chambre de l'adhérent, relation OneToOne vers une chambre"""
     dateExpiration = models.DateField(verbose_name="Date de coupure de l'adhérent",
                                       default=timezone.now().date())  # date limite avant la coupure de l'adherent
+    """Date à laquelle on va couper l'adhérent, sert dans le script prévu a cet effet"""
     commentaire = models.TextField(blank=True, verbose_name="Commentaire sur l'adhérent")
+    """Un commentaire sur l'adhérent"""
     estRezoman = models.BooleanField(default=False,
                                      verbose_name="statut de Rezoman")  # Si l'adhérent bénéficie du statut de Rezoman (filtrage MAC)
+    """Définit si l'adhérent est un rezoman, ce qui implique la désactivation du filtrage MAC sur sa chambre"""
     estValide = models.BooleanField(default=False,
                                     verbose_name="l'adherent est valide")  # Si l'adhérent à accès aux services du rezo.
-
+    """Etat de l'adhérent, qui compare juste la date d'expiration a celle d'aujourd'hui, sert essentiellement à l'affichage"""
     identifiant = models.CharField(max_length=42, verbose_name="Identifiant du wifi", unique=True)
+    """Identifiant pour les accès Wifi"""
     passwordWifi = models.BinaryField(max_length=1000, verbose_name="Mot de passe pour le Wifi (encrypt0é)", default=b'')
+    """Mot de passe autogénéré et haché par les fonctions id_generator et create_NT_hashed_password_v2 pour la connexion WiFi"""
 
     def __str__(self):
         """Retourne une chaîne de caractère caractéristique de l'adhérent"""
@@ -90,25 +100,31 @@ class Adherent(models.Model):
         super(Adherent, self).validate_unique(exclude)
 
 def id_generator(size, chars=string.ascii_uppercase + string.digits+string.ascii_lowercase):
+    """Crée une chaine de caractère aléatoire de longueur fixé"""
     return ''.join(random.SystemRandom().choice(chars) for _ in range(size))
 
 def create_NT_hashed_password_v2(passwd, user, domain):
-    "create NT hashed password"
+    """Encode le mot de passe au format md4, utilisé par le projet du serveur Wifi"""
     digests = hashlib.new('md4', passwd.encode('utf-16le')).digest()
     return hmac.new(digests, (user.upper()+domain).encode('utf-16le')).digest()
 
 class Ordinateur(models.Model):
     """Model des objets représentant les ordinateurs. Ils definissent l'IP et la MAC du PC autorisé"""
-
     nomDNS = models.CharField(max_length=20, primary_key=True, verbose_name="nom indice du PC")
+    """Non autogénéré comme entrée DNS pour cette carte, egalement clé primaire de l'entité Ordinateur"""
     DNSactif = models.BooleanField(verbose_name="non DNS actif ?", default=False)
+    """Vrai si le PC est enregistré dans la liste DNS"""
     adresseMAC = models.CharField(max_length=17, validators=[
         RegexValidator(regex=r'^([a-fA-F0-9]{2}[: ;]?){5}[a-fA-F0-9]{2}$', message="Adresse MAC invalide")],
                                   verbose_name="Adresse MAC")
+    """Adresse MAC de la carte concernée"""
     adresseIP = models.GenericIPAddressField(protocol='IpV4', verbose_name="IP dynamique", unique=True)
+    """IP attribué a cette carte"""
     proprietaire = models.ForeignKey(Adherent, verbose_name="Possesseur de l'ordinateur",
                                      related_name='listeOrdinateur')
+    """Relation OneToMany vers l'adhérent qui possède cette carte réseau"""
     carteWifi = models.BooleanField(verbose_name="Carte Wifi ?", default=False)
+    """Défini si c'est une carte Wifi"""
 
 
     @classmethod
@@ -126,6 +142,7 @@ class Ordinateur(models.Model):
         return pile
 
     IP_pile = []  # Pile qui va contenir les IP disponible.
+    """Liste des IP disponible"""
 
     def save(self, *argc, **argv):
         """Surcharge de la fonction de sauvegarde qui va s'occuper de formater les chaînes préalablement"""
@@ -163,5 +180,6 @@ class Ordinateur(models.Model):
             self.adresseIP = self.__class__.IP_pile.pop()
 
     def delete(self, using=None):
+        """Fonction qui reinsère l'IP dans la liste lors d'une supréssion"""
         self.__class__.IP_pile.a
         super(Ordinateur, self.delete(using))

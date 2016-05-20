@@ -178,3 +178,6 @@ class Constante(models.Model):
     """classe qui va contenir les differente constantes utiles pour le fonctionnement, pour le moment que des décimal"""
     cle = models.CharField(verbose_name="Nom de la constante", primary_key=True, max_length=90)
     value = models.DecimalField(verbose_name="Valeur", max_digits=20, decimal_places=10)
+
+    def __str__(self):
+        return self.cle

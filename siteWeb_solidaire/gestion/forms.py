@@ -1,3 +1,5 @@
+"""Fichier des différents formulaires lièe aux entités Utilisateur, Payement et Log"""
+# coding=utf8
 from django import forms
 from .models import Payement, Log, User, Utilisateur, RoleRezoman
 from django.contrib.auth.models import Group
@@ -5,18 +7,22 @@ from ressourcesAdherent.models import Adherent
 
 #Formulaire pour la page de connexion (il est assez explicite comme ça)
 class connexionForm(forms.Form):
+    """Formulaire pour le login"""
     username = forms.CharField(label="Nom d'utilisateur", max_length=30)
     password = forms.CharField(label="Mot de passe", widget=forms.PasswordInput)
 
 
 class PayementViewForm(forms.ModelForm):
+    """Formulaire pour l'affichage et l'édition d'un payement particulier"""
     #Sous classe pour les paramètres d'affichage de l'entité
     class Meta:
+        """Classe pour parametrer l'affichage des différents champs"""
         model = Payement
         fields = ['banque', 'credit', 'montantRecu', 'commentaire']
 
     #Fonction qui effectue la mise a jour de l'entité : copie du formulaire, enregistrement et création du Log
     def editer(self, admin, payement):
+        """Fonction de mise à jour de du payement, enregistrement et création du Log"""
         payement.credit = self.instance.credit
         payement.banque = self.instance.banque
         payement.montantRecu = self.instance.montantRecu
@@ -26,12 +32,16 @@ class PayementViewForm(forms.ModelForm):
         log.save()
 
 class UtilisateurForm(forms.Form):
+    """Formulaire pour créer un nouveau administrateur du site"""
     username = forms.CharField(label="Pseudonyme", widget=forms.TextInput(attrs={'required': 'true'}))
     password1 = forms.CharField(label="Mot de passe", widget=forms.PasswordInput(attrs={'required': 'true'}))
+    """Champ pour la première instance du mot de passe"""
     password2 = forms.CharField(label="Retapez le mot de passe", widget=forms.PasswordInput(attrs={'required': 'true'}))
+    """Champ pour la seconde instance du mot de passe, pour vérifier la première"""
     role = forms.ChoiceField(label="Role du rezoman", choices=RoleRezoman.genererTuples())
 
     def clean(self):
+        """Surcharge de la fonction de django qui verifie que les champs sont valides. Elle contrôle entre autre si les deux password sont bien identique"""
         cleaned_data = super(UtilisateurForm, self).clean()
         password = self.cleaned_data.get('password1')
         passwordConfirm = self.cleaned_data.get('password2')

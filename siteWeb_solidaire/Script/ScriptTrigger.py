@@ -27,9 +27,13 @@ def define_switch_port(chambre):
         fonction = SwitchB3.remplir
     return (fonction, port)
 
-def script_InsertAdherent(adhr):
+def script_InsertAdherent(adhrId):
     """Script qui est appelé sur le trigger de création de l'adhérent"""
-    if adhr.chambre is None:
+    try:
+        adhr = Adherent.objects.get(pk=adhrId)
+        if adhr.chambre is None:
+            return
+    except Adherent.DoesNotExist:
         return
     (fncton, port) = define_switch_port(adhr.chambre)
     fncton("set interface ge-0/0/{0} unit 0 family ethernet-switching port-mode access".format(port))
