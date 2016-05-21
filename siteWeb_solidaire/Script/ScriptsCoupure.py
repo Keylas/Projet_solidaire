@@ -1,3 +1,5 @@
+# coding=utf8
+
 from django.utils.timezone import datetime
 import threading
 

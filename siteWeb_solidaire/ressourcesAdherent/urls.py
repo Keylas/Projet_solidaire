@@ -1,7 +1,10 @@
+##Liste des urls liée au module ressourcesAdhérent avec les vues associées
+
 from django.conf.urls import patterns, include, url
 from django.contrib.auth import views as auth_views
 from . import views
 
+##Liste des patterns des urls sous la forme (regex, views, nom_relatif)
 urlpatterns = [
     url(r'^listeAdherent$', views.ListeAdherent.as_view(), name="affichageAdherent"), # page pour afficher les adherents
     url(r'^rezotage$', views.rezotage, name="pageRezotage"), # page de rezotage d'un nouvel adherent

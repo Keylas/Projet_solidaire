@@ -1,3 +1,5 @@
+# coding=utf8
+
 from .Ecriture2 import SwitchA1, SwitchA2, SwitchB1, SwitchB2, SwitchC1, SwitchC2, SwitchD1, SwitchD2, SwitchH1, SwitchB3
 from ressourcesAdherent.models import Adherent, Ordinateur, Chambres
 
