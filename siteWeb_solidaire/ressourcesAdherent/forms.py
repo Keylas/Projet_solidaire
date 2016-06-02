@@ -3,7 +3,7 @@
 # coding=utf8
 from django import forms
 import re
-from .models import Adherent, Ordinateur
+from .models import Adherent, Ordinateur, Chambre
 from gestion.models import Log
 
 ##Formulaire pour le rezotage d'un nouvel Adhérent
@@ -42,7 +42,7 @@ class RezotageForm(forms.Form):
     ##Surcharge de la fonction native de django pour controler la validité du numéro de chambre
     #@param self Réference vers le formulaire
     def clean_chambre(self):
-        chambre = self.cleaned_data['chambre']
+        chambre = Chself.cleaned_data['chambre']
         if re.search(r'^[A-DH][0-3]((0[0-9])|(1[0-3]))$', chambre) is None:
             raise forms.ValidationError("Cette chambre n'existe pas")
 
@@ -162,7 +162,7 @@ class FormulaireAdherentComplet():
             self.adherent.nom = self.mainForm.cleaned_data['nom']
             self.adherent.prenom = self.mainForm.cleaned_data['prenom']
             self.adherent.mail = self.mainForm.cleaned_data['mail']
-            self.adherent.chambre = self.mainForm.cleaned_data['chambre']
+            self.adherent.chambre = Chambre.objects.get(pk=self.mainForm.cleaned_data['chambre'])
             self.adherent.estRezoman = self.mainForm.cleaned_data['rezoman']
             self.adherent.identifiant = self.mainForm.cleaned_data['identifiant']
             self.adherent.save()  # Exception de validation à gérer ici

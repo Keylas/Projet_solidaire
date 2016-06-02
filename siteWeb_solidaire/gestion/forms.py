@@ -1,20 +1,22 @@
-"""Fichier des différents formulaires lièe aux entités Utilisateur, Payement et Log"""
+##Fichier regroupant les formulaires utilisé par le module gestion pour le site (édition ou création d'entités)
+
 # coding=utf8
+
 from django import forms
 from .models import Payement, Log, User, Utilisateur, RoleRezoman
 from django.contrib.auth.models import Group
 from ressourcesAdherent.models import Adherent
 
-#Formulaire pour la page de connexion (il est assez explicite comme ça)
+##Formulaire pour la page de connexion (il est assez explicite comme ça)
 class connexionForm(forms.Form):
     """Formulaire pour le login"""
     username = forms.CharField(label="Nom d'utilisateur", max_length=30)
     password = forms.CharField(label="Mot de passe", widget=forms.PasswordInput)
 
 
+##Formulaire pour l'affichage et l'édition d'un payement particulier
 class PayementViewForm(forms.ModelForm):
-    """Formulaire pour l'affichage et l'édition d'un payement particulier"""
-    #Sous classe pour les paramètres d'affichage de l'entité
+    ##Sous classe pour les paramètres d'affichage  et d'ordonancement de l'entité
     class Meta:
         """Classe pour parametrer l'affichage des différents champs"""
         model = Payement

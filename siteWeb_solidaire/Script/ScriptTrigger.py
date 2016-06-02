@@ -1,32 +1,36 @@
 # coding=utf8
 
-from .Ecriture2 import SwitchA1, SwitchA2, SwitchB1, SwitchB2, SwitchC1, SwitchC2, SwitchD1, SwitchD2, SwitchH1, SwitchB3
-from ressourcesAdherent.models import Adherent, Ordinateur, Chambres
+import psycopg2, sys
+
+sys.path.append("/home/corentin/ProjetWeb/projet_solidaire/siteWeb_solidaire/")
+from Script.Ecriture2 import SwitchA1, SwitchA2, SwitchB1, SwitchB2, SwitchC1, SwitchC2, SwitchD1, SwitchD2, SwitchH1, SwitchB3
 
 def define_switch_port(chambre):
     """Fonction qui sert a faire le link entre la chambre et le couple switch/port"""
     fonction = None
-    port = chambre.port
-    if chambre.switch=="A1":
+    port = chambre[1]
+    if chambre[0]=="A1":
         fonction = SwitchA1.remplir
-    elif chambre.switch=="A2":
+    elif chambre[0]=="A2":
         fonction = SwitchA2.remplir
-    elif chambre.switch=="B1":
+    elif chambre[0]=="B1":
         fonction = SwitchB1.remplir
-    elif chambre.switch=="B2":
+    elif chambre[0]=="B2":
         fonction = SwitchB2.remplir
-    elif chambre.switch=="C1":
+    elif chambre[0]=="C1":
         fonction = SwitchC1.remplir
-    elif chambre.switch=="C2":
+    elif chambre[0]=="C2":
         fonction = SwitchC2.remplir
-    elif chambre.switch=="D1":
+    elif chambre[0]=="D1":
         fonction = SwitchD1.remplir
-    elif chambre.switch=="D2":
+    elif chambre[0]=="D2":
         fonction = SwitchD2.remplir
-    elif chambre.switch=="H1":
+    elif chambre[0]=="H1":
         fonction = SwitchH1.remplir
-    else:
+    elif chambre[0]=='B3':
         fonction = SwitchB3.remplir
+    else:
+        fonction = "ERREUR"
     return (fonction, port)
 
 def script_InsertAdherent(adhrId):
@@ -65,26 +69,81 @@ def script_UpdateAdherent(adhrOld, adhr):
     if adhr.mail != adhrOld.mail:
         print("changer pour mailing (si pas lecture reverse)")
 
-def script_InsertOrdinateur(ordi):
+def script_InsertOrdinateur(ordi, cursor):
     """Script qui est appelé lors de la création d'un ordinateur"""
-    if ordi.carteWifi or ordi.proprietaire.chambre is None:
+    if ordi['carteWifi']:
         return
-    (fncton, port) = define_switch_port(ordi.proprietaire.chambre)
-    fncton("set ethernet-switching-option secure-access-port interface ge-0/0/{0} mac-limit {1} action drop".format(port, ordi.proprietaire.listeOrdinateur.count()))
-    fncton("set ethernet-switching-option secure-access-port interface ge-0/0/{0} allowed-mac {1}".format(port, ordi.adresseMAC))
+    cursor.execute("SELECT switch, port FROM \"ressourcesAdherent_chambre\" WHERE numero = (SELECT chambre_id FROM \"ressourcesAdherent_adherent\" WHERE id={0});".format(ordi['proprietaire_id']))
+    res = cursor.fetchone()
+    (fncton, port) = define_switch_port(res)
+    if fncton == "ERREUR":
+        return
+    cursor.execute("SELECT COUNT(*) FROM \"ressourcesAdherent_ordinateur\" WHERE proprietaire_id = {0};".format(ordi['proprietaire_id']))
+    fncton("set ethernet-switching-option secure-access-port interface ge-0/0/{0} mac-limit {1} action drop".format(port, cursor.fetchone()[0]+1))
+    fncton("set ethernet-switching-option secure-access-port interface ge-0/0/{0} allowed-mac {1}".format(port, ordi['adresseMAC']))
 
-def script_DeleteOrdinateur(ordi):
+def script_DeleteOrdinateur(ordi, cursor):
     """Script qui est appelé lors de la supression d'un ordinateur"""
-    if ordi.carteWifi or ordi.proprietaire.chambre is None:
+    if ordi['carteWifi']:
         return
-    (fncton, port) = define_switch_port(ordi.proprietaire.chambre)
-    fncton("delete ethernet-switching-option secure-access-port interface ge-0/0/{0} allowed-mac {1}".format(port, ordi.adresseMAC))
-    fncton("set ethernet-switching-option secure-access-port interface ge-0/0/{0} mac-limit {1} action drop".format(port, ordi.proprietaire.listeOrdinateur.count()))
+    cursor.execute("SELECT switch, port FROM \"ressourcesAdherent_chambre\" WHERE numero = (SELECT chambre_id FROM \"ressourcesAdherent_adherent\" WHERE id={0});".format(ordi['proprietaire_id']))
+    res = cursor.fetchone()
+    (fncton, port) = define_switch_port(res)
+    if fncton == "ERREUR":
+        return
+    cursor.execute("SELECT COUNT(*) FROM \"ressourcesAdherent_ordinateur\" WHERE proprietaire_id = {0};".format(ordi['proprietaire_id']))
+    fncton("delete ethernet-switching-option secure-access-port interface ge-0/0/{0} allowed-mac {1}".format(port, ordi['adresseMAC']))
+    fncton("set ethernet-switching-option secure-access-port interface ge-0/0/{0} mac-limit {1} action drop".format(port, cursor.fetchone()[0]-1))
 
-def script_updateOrdinateur(ordiOld, ordi):
+def script_updateOrdinateur(dict, cursor):
     """Script qui est appelé lors de l'édition d'un ordinateur"""
-    if ordi.carteWifi or ordi.proprietaire.chambre is None:
+    if dict['new']['carteWifi']:
         return
-    (fncton, port) = define_switch_port(ordi.proprietaire.chambre)
-    fncton("delete ethernet-switching-option secure-access-port interface ge-0/0/{0} allowed-mac {1}".format(port, ordiOld.adresseMAC))
-    fncton("set ethernet-switching-option secure-access-port interface ge-0/0/{0} allowed-mac {1}".format(port, ordi.adresseMAC))
+    cursor.execute("SELECT switch, port FROM \"ressourcesAdherent_chambre\" WHERE numero = (SELECT chambre_id FROM \"ressourcesAdherent_adherent\" WHERE id={0});".format(dict['new']['proprietaire_id']))
+    res = cursor.fetchone()
+    (fncton, port) = define_switch_port(res)
+    if fncton == "ERREUR":
+        return
+
+    fncton("delete ethernet-switching-option secure-access-port interface ge-0/0/{0} allowed-mac {1}".format(port, dict['old']['adresseMAC']))
+    fncton("set ethernet-switching-option secure-access-port interface ge-0/0/{0} allowed-mac {1}".format(port, dict['new']['adresseMAC']))
+
+def traitementEvent(dict):
+    try:
+        conn = psycopg2.connect(database="db_superuser", user="superuser", password="superuser", host="localhost")
+        cur = conn.cursor()
+    except:
+        print("ERREUR : Connexion impossible")
+        return
+    if dict['table_name'] == "ressourcesAdherent_ordinateur":
+        if dict['event'] == "INSERT":
+            script_InsertOrdinateur(dict['new'], cur)
+        elif dict['event'] == "UPDATE":
+            script_updateOrdinateur(dict, cur)
+        elif dict['event'] == "DELETE":
+            script_DeleteOrdinateur(dict['old'], cur)
+        else:
+            cur.close()
+            conn.close()
+            return
+        SwitchB3.ecrire()
+    elif dict['table'] == "Adherent":
+        cur.close()
+        conn.close()
+        return
+    else:
+        cur.close()
+        conn.close()
+        return
+
+def testEvent():
+    dico = {'table':"Ordinateur", 'trigger':"INSERT", 'new':{'proprietaire':5, 'adresseMAC': "12:17:94:a1:e7:58", 'carteWifi':False}}
+    traitementEvent(dico)
+
+    dico['trigger']="UPDATE"
+    dico['old'] = {'proprietaire':5, 'adresseMAC': "12:17:94:a1:e7:58", 'carteWifi':False}
+    dico['new'] = {'proprietaire':5, 'adresseMAC': "18:a7:94:a1:e7:58", 'carteWifi':False}
+    traitementEvent(dico)
+
+if __name__ == '__main__':
+    testEvent()

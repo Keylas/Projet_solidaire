@@ -1,6 +1,7 @@
+# coding=utf8
+
 ##Fichier regroupant les entités lièe directement aux résidents : Chambre, Adherent et Ordinateur
 
-# coding=utf8
 from django.db import models
 from django.utils import timezone
 from django.core.validators import RegexValidator, MinValueValidator
@@ -206,5 +207,5 @@ class Ordinateur(models.Model):
     #@param self Réference de l'ordinateur
     #@param using paramètre de la fonction mère de django
     def delete(self, using=None):
-        self.__class__.IP_pile.a
-        super(Ordinateur, self.delete(using))
+        self.__class__.IP_pile.append(self.adresseIP)
+        super(Ordinateur, self).delete(using)

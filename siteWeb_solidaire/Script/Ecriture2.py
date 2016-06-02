@@ -3,6 +3,12 @@
 import threading
 
 
+
+def communicationSSH(listeInstruction):
+
+
+
+
 class Timer(threading.Thread):
     def __init__(self, time, fonction):
         threading.Thread.__init__(self)
@@ -44,10 +50,14 @@ class SwitchWriter(object):
     def ecrire(cls):
         cls.mutex.acquire()
         print('Appel du script d\'écriture sur {0}'.format(cls.ip))  # Script pour écrire sur le switch
+        fichier = open("/home/corentin/ProjetWeb/projet_solidaire/Script/resultat.txt", 'w')
         for ins in cls.instruction:
             print(ins)
+            fichier.write(str(ins))
         cls.instruction = []
+        fichier.close()
         cls.mutex.release()
+
 
 class SwitchA1(SwitchWriter):
     instruction = []
